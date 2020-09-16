@@ -1,13 +1,7 @@
 name: unit-tests
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
+on: [push] [pull_request]
 jobs:
-  CI:
+  unit-tests:
     runs-on: ubuntu-latest
 
     steps:
