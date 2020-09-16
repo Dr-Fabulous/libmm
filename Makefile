@@ -14,7 +14,7 @@ endef
 $(eval $(call DEC_MK_RULE,libmm,))
 $(eval $(call DEC_MK_RULE,unit-test,libmm))
 
-all: libmm
+all: libmm unit-test
 
 clean: $(foreach DEP,$(MK),$(DEP)-clean)
 

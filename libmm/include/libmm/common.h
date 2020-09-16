@@ -18,6 +18,12 @@
 #error "compiler is missing import/export attributes"
 #endif
 
+#ifdef LIBMM_EXPORTING
+#define LIBMM_FUNCTION LIBMM_EXPORT
+#else
+#define LIBMM_FUNCTION LIBMM_IMPORT
+#endif
+
 // force expansion of macros before concat
 #define LIBMM_INTERNAL_CAT( lhs, rhs ) lhs##rhs
 #define LIBMM_CAT( lhs, rhs ) LIBMM_INTERNAL_CAT( lhs, rhs )

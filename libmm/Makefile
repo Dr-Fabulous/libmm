@@ -7,7 +7,7 @@ S_OBJ:=$(SRC:%.c=%.o)
 
 CC:=gcc
 AR:=ar
-COMMON_CFLAGS:=-c -std=c11 -I $(INC)
+COMMON_CFLAGS:=-c -std=c11 -I $(INC) -DLIBMM_EXPORTING
 COMMON_LDFLAGS:=
 
 ifneq ($(DEBUG),)

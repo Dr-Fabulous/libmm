@@ -10,7 +10,7 @@ struct random {
 	unsigned long d;
 } random_t;
 
-LIBMM_EXPORT unsigned long random_next( struct random *this, unsigned long min, unsigned long max );
-LIBMM_EXPORT void random_reset( struct random *this, unsigned long seed );
+LIBMM_FUNCTION unsigned long random_next( struct random *this, unsigned long min, unsigned long max );
+LIBMM_FUNCTION void random_reset( struct random *this, unsigned long seed );
 
 #endif
