@@ -109,7 +109,7 @@ typedef struct unit {
 		struct unit_err err = suite.run();\
 		\
 		if ( err.err ) {\
-			UNIT_ERR( "failed on '%s:%d %s'\n", err.file, err.line, err.err );\
+			UNIT_ERR( "%s:%d: %s'\n", err.file, err.line, err.err );\
 			exit( EXIT_FAILURE );\
 		}\
 	} while( 0 )
