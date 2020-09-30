@@ -1,33 +1,33 @@
-#include "libmm/unit.h"
-#include "libmm/co.h"
+#include "mm/unit.h"
+#include "mm/co.h"
 
 struct counter_state {
-	struct co co;
+	struct mm_co co;
 	int i;
 };
 
-static enum co_state counter( struct counter_state *this ) {
-	co_begin( &this->co );
+MM_COROUTINE( counter, struct counter_state *this ) {
+	MM_CO_BEGIN( &this->co );
 
-	for ( this->i = 0; this->i < 5; ++this->i ) {
-		co_yield( &this->co );
+	for( this->i = 0; this->i < 5; ++this->i ) {
+		MM_CO_YIELD( &this->co );
 	}
 
-	co_end( &this->co );
+	MM_CO_END( &this->co );
 }
 
-UNIT_CASE( counter_case, NULL, NULL ) {
+MM_UNIT_CASE( counter_case, NULL, NULL ) {
 	struct counter_state st = { 0 };
 	int i = 0;
-
-	while( co_resume( counter( &st ) ) ) {
-		UNIT_ASSERT( i++ == st.i, "increment values not equal" );
+	
+	while( MM_CO_RESUME( counter( &st ) ) ) {
+		MM_UNIT_ASSERT_EQ( i++, st.i );
 	}
 
-	return UNIT_DONE;
+	return MM_UNIT_DONE;
 }
 
-UNIT_SUITE( co_suite ) {
-	UNIT_RUN( counter_case );
-	return UNIT_DONE;
+MM_UNIT_SUITE( co_suite ) {
+	MM_UNIT_RUN( counter_case );
+	return MM_UNIT_DONE;
 }

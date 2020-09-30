@@ -1,7 +1,6 @@
-#include <limits.h>
-#include "libmm/random.h"
+#include "mm/random.h"
 
-unsigned long random_next( struct random *this, unsigned long min, unsigned long max ) {
+unsigned long mm_random_next( struct mm_random *this, unsigned long min, unsigned long max ) {
 	unsigned long tmp = this->a;
 
 	this->d = this->c;
@@ -20,7 +19,7 @@ unsigned long random_next( struct random *this, unsigned long min, unsigned long
 	return min + ( tmp % ( max - min ) );
 }
 
-void random_reset( struct random *this, unsigned long seed ) {
+void mm_random_reset( struct mm_random *this, unsigned long seed ) {
 	this->counter = 0;
 	this->a = seed;
 	this->b = 0;

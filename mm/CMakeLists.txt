@@ -8,16 +8,16 @@ set_target_properties( mm PROPERTIES PUBLIC_HEADER "${mm_hdr}"
 				     C_STANDARD 11
 				     C_STANDARD_REQUIRED ON )
 
-add_definitions( -DLIBMM_BUILDING )
+add_definitions( -DMM_BUILDING )
 
 if( CMAKE_BUILD_TYPE MATCHES Debug )
-	add_definitions( -DLIBMM_DEBUG )
+	add_definitions( -DMM_DEBUG )
 endif()
 
 if( MSVC )
 	target_compile_options( mm PRIVATE /W4 /WX )
 else()
-	target_compile_options( mm PRIVATE -Wall -Wextra -pedantic -Werror )
+	target_compile_options( mm PRIVATE -Wextra -pedantic -Werror )
 endif()
 
 include( GNUInstallDirs )
