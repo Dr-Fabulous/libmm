@@ -10,7 +10,7 @@ struct mm_random {
 	unsigned long d;
 } mm_random_t;
 
-MM_FUNCTION unsigned long mm_random_next( struct mm_random *this, unsigned long min, unsigned long max );
-MM_FUNCTION void mm_random_reset( struct mm_random *this, unsigned long seed );
+MM_API unsigned long mm_random_next( struct mm_random *this, unsigned long min, unsigned long max );
+MM_API void mm_random_reset( struct mm_random *this, unsigned long seed );
 
 #endif

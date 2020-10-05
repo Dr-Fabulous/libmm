@@ -1,6 +1,7 @@
+#include "mm/vector.h"
+#include "mm/assert.h"
 #include <stdlib.h>
 #include <string.h>
-#include "mm/vector.h"
 
 static void reset( struct mm_vector *this ) {
 	this->begin = NULL;
@@ -42,7 +43,7 @@ void mm_vector_destroy( struct mm_vector *this ) {
 bool mm_vector_set_capacity( struct mm_vector *this, size_t new_capacity ){
 	if ( !new_capacity ) {
 		if ( !mm_vector_null( this ) ) {
-			MM_FREE( this->begin );
+			mm_vector_destroy( this );
 		}
 
 		return true;
@@ -78,11 +79,11 @@ bool mm_vector_resize( struct mm_vector *this, size_t new_size ){
 	return true;
 }
 
-void* mm_vector_find( struct mm_vector *this, void *buf, int ( *cmp )( const void*, const void* ) ) {
+void* mm_vector_find( struct mm_vector *this, void *buf ) {
 	void *pos;
 
 	MM_VECTOR_FOR_EACH( this, pos ) {
-		if ( !cmp( buf, pos ) ) {
+		if ( !this->type_cmp( buf, pos ) ) {
 			return pos;
 		}
 	}
@@ -91,17 +92,20 @@ void* mm_vector_find( struct mm_vector *this, void *buf, int ( *cmp )( const voi
 }
 
 bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf ) {
-	ptrdiff_t offset = ( unsigned char* ) pos - this->begin;
+	MM_ASSERT( ( unsigned char* ) pos >= this->begin && ( unsigned char* ) pos <= this->end );
+	MM_ASSERT( ( uintptr_t ) pos % this->type_size == 0 );
+	
+	ptrdiff_t s_offset = ( unsigned char* ) pos - this->begin;
+	ptrdiff_t e_offset = mm_vector_bsize( this ) - s_offset;
 
 	if ( !mm_vector_resize( this, mm_vector_size( this ) + 1 ) ) {
 		return false;
 	}
 
-	pos = this->begin + offset;
-	offset = mm_vector_bsize( this ) - offset;
+	pos = this->begin + s_offset;
 
-	if ( offset ) {
-		memmove( ( unsigned char* ) pos + this->type_size, pos, offset );
+	if ( e_offset ) {
+		memmove( ( unsigned char* ) pos + this->type_size, pos, e_offset );
 	}
 
 	memcpy( pos, buf, this->type_size );
@@ -110,7 +114,10 @@ bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf ) {
 }
 
 void mm_vector_erase( struct mm_vector *this, void *pos, void *buf ){
-	ptrdiff_t offset = mm_vector_bsize( this ) - ( ( unsigned char* ) pos - this->begin );
+	MM_ASSERT( ( unsigned char* ) pos >= this->begin && ( unsigned char* ) pos < this->end );
+	MM_ASSERT( ( uintptr_t ) pos % this->type_size == 0 );
+	
+	ptrdiff_t offset = mm_vector_bsize( this ) - ( ( unsigned char* ) pos - this->begin ) - this->type_size;
 
 	if ( buf ) {
 		memcpy( buf, pos, this->type_size );

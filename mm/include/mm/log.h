@@ -35,9 +35,17 @@ typedef enum mm_log_level {
 } mm_log_level_t;
 #endif
 
-MM_FUNCTION void mm_openlog( const char *name, enum mm_log_facility facility );
-MM_FUNCTION void closelog( void );
-MM_FUNCTION void mm_vlog( enum mm_log_level level, const char *format, va_list args );
-MM_FUNCTION void mm_log( enum mm_log_level level, const char *format, ... );
+MM_API void mm_openlog( const char *name, enum mm_log_facility facility );
+MM_API void mm_closelog( void );
+MM_API void mm_vlog( enum mm_log_level level, const char *format, va_list args );
+MM_API void mm_log( enum mm_log_level level, const char *format, ... );
+
+#ifdef MM_DEBUG
+#define MM_DEBUG_VLOG( level, format, args) mm_vlog( level, format, args )
+#define MM_DEBUG_LOG( level, ... ) mm_log( level, __VA_ARGS__ )
+#else
+#define MM_DEBUG_VLOG( level, format, args )
+#define MM_DEBUG_LOG( level, ... )
+#endif
 
 #endif

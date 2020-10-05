@@ -3,11 +3,15 @@
 
 void mm_openlog( const char *name, enum mm_log_facility facility ) {
 #ifdef MM_USING_SYSLOG
+	if ( !facility ) {
+		facility = MM_USER;
+	}
+
 	openlog( name, 0, facility );
 #endif
 }
 
-void closelog( void ) {
+void mm_closelog( void ) {
 #ifdef MM_USING_SYSLOG
 	closelog();
 #endif
@@ -19,7 +23,6 @@ static inline void vlog( FILE *f, enum mm_log_level level, const char *prefix, c
 	va_copy( tmp, args );
 	vsyslog( level, format, tmp );
 #endif
-
 	MM_FPRINTF( f, "%s", prefix );
 	MM_VFPRINTF( f, format, args );
 	MM_FPRINTF( f, "\n" );

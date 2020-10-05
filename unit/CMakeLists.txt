@@ -1,4 +1,8 @@
 file( GLOB mm_unit_src "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c" )
 add_executable( mm-unit "${mm_unit_src}" )
 target_link_libraries( mm-unit PUBLIC mm )
+add_custom_target( gdb COMMAND gdb --help 1>/dev/null 2>&1 || printf "\\033[31mERROR\\033[0m: %s\\n" "gdb not installed on system" )
+add_custom_target( gdbcheck COMMAND gdb -- ${CMAKE_CURRENT_BINARY_DIR}/mm-unit DEPENDS mm-unit gdb )
+add_custom_target( valgrind COMMAND valgrind --help 1>/dev/null 2>&1 || printf "\\033[31mERROR\\033[0m: %s\\n" "valgrind not installed on system" )
+add_custom_target( memcheck COMMAND valgrind -- ${CMAKE_CURRENT_BINARY_DIR}/mm-unit DEPENDS mm-unit valgrind )
 add_custom_target( check COMMAND ${CMAKE_CURRENT_BINARY_DIR}/mm-unit DEPENDS mm-unit )

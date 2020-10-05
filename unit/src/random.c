@@ -1,11 +1,12 @@
-#include <time.h>
+#include "mm/common.h"
 #include "mm/random.h"
 #include "mm/unit.h"
+#include <time.h>
 
 #define MIN 0
 #define MAX 100
-#define ITERATIONS 100000000
-#define TOLERENCE 0.01f
+#define ITERATIONS 100000
+#define TOLERENCE 0.2f
 
 MM_UNIT_CASE( uniform_dist_values_case, NULL, NULL ) {
 	unsigned long hits[ MAX - MIN ] = { 0 };
@@ -34,7 +35,7 @@ MM_UNIT_CASE( uniform_dist_seeds_case, NULL, NULL ) {
 		++hits[ mm_random_next( &r, MIN, MAX ) ];
 	}
 
-	for ( unsigned long i = 0; i < MAX - MIN; ++i ) {
+	for ( unsigned long i = 0; i < MM_ARR_SIZE( hits ); ++i ) {
 		float hit = ( ( float ) hits[ i ] / ( float ) ITERATIONS ) * 100.0f;
 		MM_UNIT_ASSERT_RANGE( 1.0f - TOLERENCE, 1.0f + TOLERENCE, hit );
 	}

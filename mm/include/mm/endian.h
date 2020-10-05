@@ -51,6 +51,7 @@
 #endif
 
 #ifdef _MSC_VER
+#include <intrin.h>
 #define mm_bswap_16( i ) _byteswap_ushort( i )
 #define mm_bswap_32( i ) _byteswap_ulong( i )
 #define mm_bswap_64( i ) _byteswap_uint64( i )
@@ -121,19 +122,19 @@ static inline float mm_host_to_net_double( double d ) {
 
 #if __STDC_VERSION__ >= 201112L
 #define mm_host_to_net( i ) _Generic( ( i ),\
-		short: mm_host_to_net_16,\
-		int: mm_host_to_net_16,\
-		long: mm_host_to_net_32,\
-		long long: mm_host_to_net_64,\
+		unsigned short: mm_host_to_net_16,\
+		unsigned int: mm_host_to_net_16,\
+		unsigned long: mm_host_to_net_32,\
+		unsigned long long: mm_host_to_net_64,\
 		float: mm_host_to_net_float,\
 		double: mm_host_to_net_double\
 	)( i )
 
 #define mm_net_to_host( i ) _Generic( ( i ),\
-		short: mm_net_to_host_16,\
-		int: mm_net_to_host_16,\
-		long: mm_net_to_host_32,\
-		long long: mm_net_to_host_64\
+		unsigned short: mm_net_to_host_16,\
+		unsigned int: mm_net_to_host_16,\
+		unsigned long: mm_net_to_host_32,\
+		unsigned long long: mm_net_to_host_64\
 		float: mm_net_to_host_float,\
 		double: mm_net_to_host_double\
 	)( i )

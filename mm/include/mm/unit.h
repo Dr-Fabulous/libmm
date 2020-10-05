@@ -42,6 +42,9 @@ typedef struct mm_unit {
 #define MM_UNIT_ASSERT_EQ( lhs, rhs )\
 	MM_UNIT_ASSERT_SUM( lhs, ==, rhs )
 
+#define MM_UNIT_ASSERT_NOT_EQ( lhs, rhs )\
+	MM_UNIT_ASSERT_SUM( lhs, !=, rhs )
+
 #define MM_UNIT_ASSERT_LESS( lhs, rhs )\
 	MM_UNIT_ASSERT_SUM( lhs, <, rhs )
 
