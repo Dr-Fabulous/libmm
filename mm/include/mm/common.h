@@ -4,7 +4,11 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdalign.h>
 
+#if __STDC_VERSION__ < 201112L
+#error "unsupport C standard ( must be at least C11 )"
+#endif
 
 // Release/Debug mode controlled with NDEBUG macro
 #if !defined( NDEBUG ) && !defined( MM_DEBUG )

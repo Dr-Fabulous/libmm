@@ -120,7 +120,6 @@ static inline float mm_host_to_net_double( double d ) {
 #define mm_net_to_host_double( d ) ( d )
 #endif
 
-#if __STDC_VERSION__ >= 201112L
 #define mm_host_to_net( i ) _Generic( ( i ),\
 		unsigned short: mm_host_to_net_16,\
 		unsigned int: mm_host_to_net_16,\
@@ -138,6 +137,5 @@ static inline float mm_host_to_net_double( double d ) {
 		float: mm_net_to_host_float,\
 		double: mm_net_to_host_double\
 	)( i )
-#endif
 
 #endif
