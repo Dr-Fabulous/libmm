@@ -96,6 +96,7 @@ static inline void mm_vector_sort( struct mm_vector *this ) {
 	);
 }
 
+MM_API void* mm_vector_emplace( struct mm_vector *this, void *pos );
 MM_API bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf );
 
 static inline bool mm_vector_push( struct mm_vector *this, void *buf ) {

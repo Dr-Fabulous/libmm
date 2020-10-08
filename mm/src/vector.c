@@ -91,7 +91,7 @@ void* mm_vector_find( struct mm_vector *this, void *buf ) {
 	return NULL;
 }
 
-bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf ) {
+void* mm_vector_emplace( struct mm_vector *this, void *pos ) {
 	MM_ASSERT( ( unsigned char* ) pos >= this->begin && ( unsigned char* ) pos <= this->end );
 	MM_ASSERT( ( uintptr_t ) pos % this->type_size == 0 );
 	
@@ -99,7 +99,7 @@ bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf ) {
 	ptrdiff_t e_offset = mm_vector_bsize( this ) - s_offset;
 
 	if ( !mm_vector_resize( this, mm_vector_size( this ) + 1 ) ) {
-		return false;
+		return NULL;
 	}
 
 	pos = this->begin + s_offset;
@@ -108,9 +108,23 @@ bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf ) {
 		memmove( ( unsigned char* ) pos + this->type_size, pos, e_offset );
 	}
 
-	memcpy( pos, buf, this->type_size );
+	memset( pos, 0, this->type_size );
+	
+	return pos;
+}
 
-	return true;
+bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf ) {
+	MM_ASSERT( ( unsigned char* ) pos >= this->begin && ( unsigned char* ) pos <= this->end );
+	MM_ASSERT( ( uintptr_t ) pos % this->type_size == 0 );
+	
+	pos = mm_vector_emplace( this, pos );
+
+	if ( pos ) {
+		memcpy( pos, buf, this->type_size );
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void mm_vector_erase( struct mm_vector *this, void *pos, void *buf ){
