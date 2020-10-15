@@ -11,6 +11,7 @@ typedef struct mm_list_node {
 typedef struct mm_list {
 	size_t type_size;
 	size_t type_align;
+	int ( *type_cmp )( const void*, const void* );
 	struct mm_ilist head;
 } mm_list_t;
 

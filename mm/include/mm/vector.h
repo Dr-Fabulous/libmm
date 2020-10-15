@@ -99,13 +99,29 @@ static inline void mm_vector_sort( struct mm_vector *this ) {
 MM_API void* mm_vector_emplace( struct mm_vector *this, void *pos );
 MM_API bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf );
 
-static inline bool mm_vector_push( struct mm_vector *this, void *buf ) {
+static inline void* mm_vector_emplace_front( struct mm_vector *this ) {
+	return mm_vector_emplace( this, this->begin );
+}
+
+static inline void* mm_vector_emplace_back( struct mm_vector *this ) {
+	return mm_vector_emplace( this, this->end );
+}
+
+static inline bool mm_vector_push_front( struct mm_vector *this, void *buf ) {
+	return mm_vector_insert( this, this->begin, buf );
+}
+
+static inline bool mm_vector_push_back( struct mm_vector *this, void *buf ) {
 	return mm_vector_insert( this, this->end, buf );
 }
 
 MM_API void mm_vector_erase( struct mm_vector *this, void *pos, void *buf );
 
-static inline void mm_vector_pop( struct mm_vector *this, void *buf ) {
+static inline void mm_vector_pop_front( struct mm_vector *this, void *buf ) {
+	mm_vector_erase( this, this->end - this->type_size, buf );
+}
+
+static inline void mm_vector_pop_back( struct mm_vector *this, void *buf ) {
 	mm_vector_erase( this, this->end - this->type_size, buf );
 }
 
@@ -131,6 +147,6 @@ static inline void mm_vector_pop( struct mm_vector *this, void *buf ) {
 
 #define MM_VECTOR_FOR_EACH_REVERSE( vec, pos )\
 	for( ( pos ) < mm_vector_end( vec );\
-	     ( pos ) = mm_vector_begin( vec );\
+	     ( pos ) >= mm_vector_begin( vec );\
 	     ( pos ) = MM_VECTOR_PREV( vec, pos ) )
 #endif
