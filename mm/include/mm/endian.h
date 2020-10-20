@@ -120,6 +120,7 @@ static inline float mm_host_to_net_double( double d ) {
 #define mm_net_to_host_double( d ) ( d )
 #endif
 
+/** \def Generically swap bytes from host order to network order ( big endian ) */
 #define mm_host_to_net( i ) _Generic( ( i ),\
 		unsigned short: mm_host_to_net_16,\
 		unsigned int: mm_host_to_net_16,\
@@ -129,6 +130,7 @@ static inline float mm_host_to_net_double( double d ) {
 		double: mm_host_to_net_double\
 	)( i )
 
+/** \def Generically swap bytes from network order ( big endian ) to host order */
 #define mm_net_to_host( i ) _Generic( ( i ),\
 		unsigned short: mm_net_to_host_16,\
 		unsigned int: mm_net_to_host_16,\

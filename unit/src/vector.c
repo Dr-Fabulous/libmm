@@ -53,7 +53,7 @@ MM_UNIT_CASE( copy_case, NULL, NULL ) {
 	MM_UNIT_ASSERT_EQ( mm_vector_copy( &v2, &v1 ), true );
 
 	for ( int i = 0; i < 100; ++i ) {
-		MM_UNIT_ASSERT_EQ( *MM_VECTOR_AS( &v1, i, int ), *MM_VECTOR_AS( &v1, i, int ) );
+		MM_UNIT_ASSERT_EQ( *MM_VECTOR_AT_AS( &v1, i, int ), *MM_VECTOR_AT_AS( &v1, i, int ) );
 	}
 
 	mm_vector_destroy( &v1 );

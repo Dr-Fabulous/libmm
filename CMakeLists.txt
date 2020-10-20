@@ -1,5 +1,12 @@
-cmake_minimum_required( VERSION 3.10.2 )
-project( libmm VERSION 0.1.0 LANGUAGES C DESCRIPTION "jumble of C utilities" )
+cmake_minimum_required( VERSION 3.10.2 FATAL_ERROR )
+
+project( LIBMM VERSION 0.1
+	       LANGUAGES C
+	       DESCRIPTION "jumble of C utilities" )
+
+option( LIBMM_UNIT_TESTS "build and run mm unit tests" ON )
+option( LIBMM_DYNAMIC "build as a dynamic library" ON )
+option( LIBMM_BUILD_DOCS "use doxygen to generate documentation" ON )
 
 if( "${CMAKE_BUILD_TYPE}" STREQUAL "" )
 	set( CMAKE_BUILD_TYPE Release )
@@ -12,4 +19,5 @@ else()
 endif()
 
 add_subdirectory( mm )
-add_subdirectory( unit EXCLUDE_FROM_ALL )
+add_subdirectory( unit )
+add_subdirectory( docs )

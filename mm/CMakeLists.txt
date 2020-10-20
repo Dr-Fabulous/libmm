@@ -1,10 +1,21 @@
-file( GLOB mm_src "src/*.c" )
-file( GLOB_RECURSE mm_hdr "include/*.h" )
+set( LIBMM_INSTALL_LIB_DEST "${CMAKE_INSTALL_PREFIX}/lib/mm-${LIBMM_VERSION}" )
+set( LIBMM_INSTALL_INC_DEST "${CMAKE_INSTALL_PREFIX}/include/mm-${LIBMM_VERSION}" )
 
-add_library( mm SHARED "${mm_src}" )
-target_include_directories( mm PUBLIC include )
+file( GLOB LIBMM_SRC "src/*.c" )
+file( GLOB_RECURSE LIBMM_HDR "include/*.h" )
 
-set_target_properties( mm PROPERTIES PUBLIC_HEADER "${mm_hdr}"
+if( ${LIBMM_DYNAMIC} )
+	add_library( mm SHARED "${LIBMM_SRC}" )
+else()
+	add_library( mm STATIC "${LIBMM_SRC}" )
+endif()
+
+# generator expressions determine set include path when building vs installing
+target_include_directories( mm PUBLIC 
+			    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+			    $<INSTALL_INTERFACE:${LIBMM_INSTALL_INC_DEST}> )
+
+set_target_properties( mm PROPERTIES PUBLIC_HEADER "${LIBMM_HDR}"
 				     C_STANDARD 11
 				     C_STANDARD_REQUIRED ON )
 
@@ -18,8 +29,10 @@ if( MSVC )
 	target_compile_options( mm PRIVATE /W4 /WX )
 else()
 	target_compile_options( mm PRIVATE -Wextra -pedantic -Werror )
-	
-	include( GNUInstallDirs )
-	install( TARGETS mm LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-			    PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/mm" )
 endif()
+
+install( TARGETS mm EXPORT mm
+	 LIBRARY DESTINATION "${LIBMM_INSTALL_LIB_DEST}"
+	 PUBLIC_HEADER DESTINATION "${LIBMM_INSTALL_INC_DEST}" )
+
+install( EXPORT mm DESTINATION "${LIBMM_INSTALL_LIB_DEST}" )
