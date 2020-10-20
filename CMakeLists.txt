@@ -4,8 +4,8 @@ project( LIBMM VERSION 0.1
 	       LANGUAGES C
 	       DESCRIPTION "jumble of C utilities" )
 
-option( LIBMM_UNIT_TESTS "build and run mm unit tests" ON )
 option( LIBMM_DYNAMIC "build as a dynamic library" ON )
+option( LIBMM_UNIT_TESTS "build and run mm unit tests" ON )
 option( LIBMM_BUILD_DOCS "use doxygen to generate documentation" ON )
 
 if( "${CMAKE_BUILD_TYPE}" STREQUAL "" )
