@@ -1,8 +1,10 @@
 cmake_minimum_required( VERSION 3.10.2 FATAL_ERROR )
 
-project( LIBMM VERSION 0.1
-	       LANGUAGES C
+project( LIBMM LANGUAGES C
 	       DESCRIPTION "jumble of C utilities" )
+
+# figure out project version based on git
+include( version.cmake )
 
 option( LIBMM_DYNAMIC "build as a dynamic library" ON )
 option( LIBMM_UNIT_TESTS "build and run mm unit tests" ON )
@@ -20,4 +22,4 @@ endif()
 
 add_subdirectory( mm )
 add_subdirectory( unit )
-add_subdirectory( docs )
+include( docs.cmake )
