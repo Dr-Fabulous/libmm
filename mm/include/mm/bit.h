@@ -18,14 +18,10 @@
 #else
 #endif
 
-// parity
-
 // count leading zeros
 
 // count trailing zeros
 
-// rank
-
-// select
+// bitset
 
 #endif

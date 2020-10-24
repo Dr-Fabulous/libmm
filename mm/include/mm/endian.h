@@ -51,7 +51,7 @@
 #endif
 
 #ifdef _MSC_VER
-#include <intrin.h>
+#include <stdlib.h>
 #define mm_bswap_16( i ) _byteswap_ushort( i )
 #define mm_bswap_32( i ) _byteswap_ulong( i )
 #define mm_bswap_64( i ) _byteswap_uint64( i )
