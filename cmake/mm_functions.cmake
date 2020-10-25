@@ -67,7 +67,7 @@ function( mm_git_version )
 		return()
 	endif()
 
-	mm_execute_process_required( COMMAND ${GIT_EXECUTABLE} rev-list --count ${GIT_TAG}..HEAD
+	mm_execute_process_required( COMMAND ${GIT_EXECUTABLE} rev-list --count ${GIT_TAG}..dev
 				     OUTPUT GIT_PATCH )
 
 	if( "${GIT_BRANCH}" STREQUAL "dev" )
@@ -75,7 +75,7 @@ function( mm_git_version )
 		return()
 	endif()
 
-	mm_execute_process_required( COMMAND ${GIT_EXECUTABLE} rev-list --short HEAD
+	mm_execute_process_required( COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
 				     OUTPUT GIT_TWEAK )
 
 	mm_set_git_version( ${ARG_PREFIX} ${GIT_MAJOR} ${GIT_MINOR} ${GIT_PATCH} ${GIT_TWEAK} )
