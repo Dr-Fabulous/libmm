@@ -121,6 +121,7 @@ static inline float mm_host_to_net_double( double d ) {
 #endif
 
 /** \def Generically swap bytes from host order to network order ( big endian ) */
+#if MM_C_STD >= 11
 #define mm_host_to_net( i ) _Generic( ( i ),\
 		unsigned short: mm_host_to_net_16,\
 		unsigned int: mm_host_to_net_16,\
@@ -139,5 +140,6 @@ static inline float mm_host_to_net_double( double d ) {
 		float: mm_net_to_host_float,\
 		double: mm_net_to_host_double\
 	)( i )
+#endif
 
 #endif
