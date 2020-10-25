@@ -15,3 +15,4 @@ project( mm VERSION ${GIT_VERSION}
 	    DESCRIPTION "Jumble of useful C utilities" )
 
 add_subdirectory( mm )
+add_subdirectory( docs EXCLUDE_FROM_ALL )

@@ -1,5 +1,3 @@
-- add find_package() support
-- make config.h actually configurable ( use configure_file() )
 - make C11 components optional ( for MSVC compatibility )
 - document other finished files
 - remove type_size and type_cmp from mm_vector
