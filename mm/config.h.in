@@ -1,0 +1,26 @@
+#ifndef MM_CONFIG_H
+#define MM_CONFIG_H
+
+#define MM_VERSION @MM_VERSION@
+#define MM_MAJOR @MM_MAJOR@
+#define MM_MINOR @MM_MINOR@
+#define MM_PATCH @MM_PATCH@
+#define MM_TWEAK @MM_TWEAK@
+#define MM_C_STD @MM_C_STD@
+#cmakedefine MM_USE_BUILTINS @MM_USE_BUILTINS@
+#cmakedefine MM_USE_NATIVE @MM_USE_NATIVE@
+#cmakedefine MM_MALLOC @MM_MALLOC@
+#cmakedefine MM_CALLOC @MM_CALLOC@
+#cmakedefine MM_REALLOC @MM_REALLOC@
+#cmakedefine MM_FREE @MM_FREE@
+#cmakedefine MM_STDIN @MM_STDIN@
+#cmakedefine MM_STDOUT @MM_STDOUT@
+#cmakedefine MM_STDERR @MM_STDERR@
+#cmakedefine MM_PRINTF @MM_PRINTF@
+#cmakedefine MM_VPRINTF @MM_VPRINTF@
+#cmakedefine MM_VFPRINTF @MM_VFPRINTF@
+#cmakedefine MM_FPRINTF @MM_FPRINTF@
+#cmakedefine MM_SPRINTF @MM_SPRINTF@
+#cmakedefine MM_FFLUSH @MM_FFLUSH@
+
+#endif

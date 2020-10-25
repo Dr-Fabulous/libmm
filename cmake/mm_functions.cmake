@@ -80,3 +80,9 @@ function( mm_git_version )
 
 	mm_set_git_version( ${ARG_PREFIX} ${GIT_MAJOR} ${GIT_MINOR} ${GIT_PATCH} ${GIT_TWEAK} )
 endfunction()
+
+macro( mm_cond_set VAR DEFAULT )
+	if ( "${${VAR}}" STREQUAL "" )
+		set( ${VAR} ${DEFAULT} )
+	endif()
+endmacro()
