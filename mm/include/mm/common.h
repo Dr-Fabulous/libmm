@@ -46,32 +46,6 @@
 #define MM_HAS_INCLUDE( name ) 0
 #endif
 
-#define MM_ARR_SIZE( arr )\
-	( sizeof( arr ) / sizeof( ( arr )[ 0 ] ) )
-
-#define MM_ARR_NEXT( arr, pos )\
-	( ( void* ) ( ( unsigned char* ) ( pos ) + sizeof( ( arr )[ 0 ] ) ) )
-
-#define MM_ARR_FOREACH( arr, pos )\
-	for( ( pos ) = ( arr );\
-	     ( pos ) != ( arr ) + MM_ARR_SIZE( arr );\
-	     ( pos ) = MM_ARR_NEXT( arr, pos ) )
-
-#define MM_INTERNAL_CAT( lhs, rhs )\
-	lhs##rhs
-
-#define MM_CAT( lhs, rhs )\
-	MM_INTERNAL_CAT( lhs, rhs )
-
-#ifdef offsetof
-#define MM_OFFSET_OF offsetof
-#else
-#define MM_OFFSET_OF( type, name )\
-	( ( size_t ) &( ( type* ) NULL )->name )
-#endif
-
-#define MM_CONTAINER_OF( ptr, type, member )\
-	( ( type* ) ( ( unsigned char* ) ( ptr ) - MM_OFFSET_OF( type, member ) ) )
-
+#include "mm/macro.h"
 #include "mm/config.h"
 #endif
