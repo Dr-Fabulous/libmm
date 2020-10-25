@@ -31,3 +31,8 @@ MM_UNIT_SUITE( co_suite ) {
 	MM_UNIT_RUN( counter_case );
 	return MM_UNIT_DONE;
 }
+
+int main( int argc, const char *argv[] ) {
+	MM_UNIT_RUN_SUITE( co_suite );
+	return 0;
+}

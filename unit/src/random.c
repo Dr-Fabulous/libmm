@@ -48,3 +48,8 @@ MM_UNIT_SUITE( random_suite ) {
 	MM_UNIT_RUN( uniform_dist_seeds_case );
 	return MM_UNIT_DONE;
 }
+
+int main( int argc, const char *argv[] ) {
+	MM_UNIT_RUN_SUITE( random_suite );
+	return 0;
+}

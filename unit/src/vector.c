@@ -103,3 +103,8 @@ MM_UNIT_SUITE( vector_suite ) {
 
 	return MM_UNIT_DONE;
 }
+
+int main( int argc, const char *argv[] ) {
+	MM_UNIT_RUN_SUITE( vector_suite );
+	return 0;
+}

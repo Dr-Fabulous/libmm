@@ -16,3 +16,10 @@ project( mm VERSION ${GIT_VERSION}
 
 add_subdirectory( mm )
 add_subdirectory( docs EXCLUDE_FROM_ALL )
+
+include( CTest )
+enable_testing()
+
+if( BUILD_TESTING )
+	add_subdirectory( unit EXCLUDE_FROM_ALL )
+endif()
