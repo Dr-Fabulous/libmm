@@ -58,12 +58,11 @@ typedef struct mm_co {
 } mm_co_t;
 
 /*!
-	\brief Crate new body for a coroutine. Any implementation needs to accept a pointer
+	\brief Create new body for a coroutine. Any implementation needs to accept a pointer
 	       to something that contains a mm_co instance.
 */
 #define MM_COROUTINE( name, ... )\
 	enum mm_co_state name( __VA_ARGS__ )
-
 
 #define MM_CO_LINE( co )\
 	( co )->line
@@ -74,35 +73,58 @@ typedef struct mm_co {
 #define MM_CO_RET( co, status )\
 	MM_CO_LINE( co ) = __LINE__;\
 	return status\
-	
+
+/*!
+	\brief Initialize mm_co instance to start at the beginning of a coroutine.
+*/
 #define MM_CO_INIT( co )\
 	MM_CO_LINE( co ) = 0
 
+/*!
+	\brief Define the start of a coroutine body. This must be called
+	       before a coroutine can be yielded.
+*/
 #define MM_CO_BEGIN( co )\
 	switch( MM_CO_LINE( co ) ) {\
 		case 0:;
 
+/*!
+	\brief Exit the current coroutine and mark it as complete.
+*/
 #define MM_CO_DONE( co )\
 	do {\
 		MM_CO_JMP;\
 		MM_CO_RET( co, MM_CO_DONE );\
 	} while( 0 )
 
+/*!
+	\brief Define the end of a routine body. This must be called at
+	       the end of a function block.
+*/
 #define MM_CO_END( co )\
 	MM_CO_JMP;\
 	}\
 	MM_CO_RET( co, MM_CO_DONE )
 
+/*!
+	\breif Use this macro to wrap a function call to a coroutine.
+
+	E.g. MM_CO_RESUME( my_coroutine( &co ) ). The macro
+	will return true when the coroutine has finished.
+*/
 #define MM_CO_RESUME( call )\
 	( ( call ) != MM_CO_DONE )
 
+/*!
+	\brief Return from the current coroutine and resume at the same position.
+*/
 #define MM_CO_YIELD( co )\
 	do {\
 		MM_CO_RET( co, MM_CO_SUSPENDED );\
 		MM_CO_JMP;\
 	} while( 0 )
 
-#define _MM_CO_RET_WHILE_( co, cond, status )\
+#define MM_CO_DO_RET_WHILE( co, cond, status )\
 	do {\
 		MM_CO_JMP;\
 		\
@@ -111,15 +133,30 @@ typedef struct mm_co {
 		}\
 	} while( 0 )
 
+/*!
+	\breif Yield the current coroutine while the given condition is true.
+*/
 #define MM_CO_YIELD_WHILE( co, cond )\
-	_MM_CO_RET_WHILE( co, cond, MM_CO_SUSPENDED )
+	MM_CO_DO_RET_WHILE( co, cond, MM_CO_SUSPENDED )
 
+/*!
+	\brief Yield the current coroutine until the given condition is true.
+*/
 #define MM_CO_YIELD_UNTIL( co, cond )\
 	MM_CO_YIELD_WHILE( co, !( cond ) )
 
-#define MM_CO_WAIT( co, call )\
-	_MM_CO_RET_WHILE_( co, MM_CO_RESUME( call ), MM_CO_WAITING )
+/*!
+	\brief Yield the current coroutine until the passed courtine call
+	       has finished.
 
+	The value passed to 'call' is the same as MM_CO_RESUME().
+*/
+#define MM_CO_WAIT( co, call )\
+	MM_CO_DO_RET_WHILE( co, !MM_CO_RESUME( call ), MM_CO_WAITING )
+
+/*!
+	\brief Initialize a another coroutine and yield until it has finished.
+*/
 #define MM_CO_INIT_WAIT( co, other_co, call )\
 	do {\
 		MM_CO_INIT( other_co );\
