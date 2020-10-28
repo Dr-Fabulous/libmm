@@ -24,18 +24,18 @@ endfunction()
 
 function( mm_git_version )
 	macro( mm_set_git_version PREFIX MINOR MAJOR PATCH TWEAK )
-		set( ${PREFIX}_MINOR ${MINOR} PARENT_SCOPE )
 		set( ${PREFIX}_MAJOR ${MAJOR} PARENT_SCOPE )
+		set( ${PREFIX}_MINOR ${MINOR} PARENT_SCOPE )
 		set( ${PREFIX}_PATCH ${PATCH} PARENT_SCOPE )
 		set( ${PREFIX}_TWEAK ${TWEAK} PARENT_SCOPE )
 
 		# safe to use with cmake
-		set( VERSION ${MINOR} ${MAJOR} ${PATCH} ${TWEAK} )
+		set( VERSION ${MAJOR} ${MINOR} ${PATCH} ${TWEAK} )
 		string( REPLACE ";" "." VERSION "${VERSION}" )
 		set( ${PREFIX}_FULL_VERSION ${VERSION} PARENT_SCOPE )
 
 		# patch should be short hash from latest feature commit
-		set( VERSION ${MINOR} ${MAJOR} ${PATCH} )
+		set( VERSION ${MAJOR} ${MINOR} ${PATCH} )
 		string( REPLACE ";" "." VERSION "${VERSION}" )
 		set( ${PREFIX}_VERSION ${VERSION} PARENT_SCOPE )
 	endmacro()
