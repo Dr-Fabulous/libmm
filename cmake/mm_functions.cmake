@@ -23,7 +23,7 @@ function( mm_execute_process_required )
 endfunction()
 
 function( mm_git_version )
-	macro( mm_set_git_version PREFIX MINOR MAJOR PATCH TWEAK )
+	macro( mm_set_git_version PREFIX MAJOR MINOR PATCH TWEAK )
 		set( ${PREFIX}_MAJOR ${MAJOR} PARENT_SCOPE )
 		set( ${PREFIX}_MINOR ${MINOR} PARENT_SCOPE )
 		set( ${PREFIX}_PATCH ${PATCH} PARENT_SCOPE )
@@ -63,7 +63,7 @@ function( mm_git_version )
 	list( GET GIT_TAG_VERSION 1 GIT_MINOR )
 
 	if( "${GIT_BRANCH}" STREQUAL "main" )
-		mm_set_git_version( ${ARG_PREFIX} ${GIT_MAJOR} ${GIT_MINOR} "" "" )
+		mm_set_git_version( ${ARG_PREFIX} ${GIT_MAJOR} ${GIT_MINOR} 0 "" )
 		return()
 	endif()
 
