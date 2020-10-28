@@ -1,5 +1,4 @@
 #include "mm/vector.h"
-#include "mm/assert.h"
 #include <stdlib.h>
 #include <string.h>
 
