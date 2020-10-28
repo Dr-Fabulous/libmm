@@ -9,6 +9,7 @@
 #define MM_C_STD @MM_C_STD@
 #cmakedefine MM_USE_BUILTINS @MM_USE_BUILTINS@
 #cmakedefine MM_USE_NATIVE @MM_USE_NATIVE@
+#cmakedefine MM_ALLOC_INC @MM_ALLOC_INC@
 #cmakedefine MM_MALLOC @MM_MALLOC@
 #cmakedefine MM_CALLOC @MM_CALLOC@
 #cmakedefine MM_REALLOC @MM_REALLOC@

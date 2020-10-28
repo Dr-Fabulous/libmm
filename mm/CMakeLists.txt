@@ -45,6 +45,7 @@ if( MM_OPT_USE_NATIVE )
 	mm_cond_set( MM_USE_NATIVE 1 )
 endif()
 
+mm_cond_set( MM_ALLOC_INC stdlib.h )
 mm_cond_set( MM_MALLOC malloc )
 mm_cond_set( MM_REALLOC realloc )
 mm_cond_set( MM_CALLOC calloc )
@@ -61,6 +62,9 @@ mm_cond_set( MM_FFLUSH fflush )
 
 configure_file( "config.h.in"
 		"${CMAKE_CURRENT_BINARY_DIR}/config.h" )
+
+configure_file( "alloc.h.in"
+		"${CMAKE_CURRENT_BINARY_DIR}/alloc.h" )
 
 target_compile_features( mm PUBLIC c_function_prototypes
 				   c_variadic_macros )

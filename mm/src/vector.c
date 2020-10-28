@@ -1,5 +1,6 @@
 #include "mm/vector.h"
-#include <stdlib.h>
+#include "mm/alloc.h"
+#include <assert.h>
 #include <string.h>
 
 static void reset( struct mm_vector *this ) {
@@ -91,8 +92,8 @@ void* mm_vector_find( struct mm_vector *this, void *buf ) {
 }
 
 void* mm_vector_emplace( struct mm_vector *this, void *pos ) {
-	MM_ASSERT( ( unsigned char* ) pos >= this->begin && ( unsigned char* ) pos <= this->end );
-	MM_ASSERT( ( uintptr_t ) pos % this->type_size == 0 );
+	assert( ( unsigned char* ) pos >= this->begin && ( unsigned char* ) pos <= this->end );
+	assert( ( uintptr_t ) pos % this->type_size == 0 );
 	
 	ptrdiff_t s_offset = ( unsigned char* ) pos - this->begin;
 	ptrdiff_t e_offset = mm_vector_bsize( this ) - s_offset;
@@ -113,8 +114,8 @@ void* mm_vector_emplace( struct mm_vector *this, void *pos ) {
 }
 
 bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf ) {
-	MM_ASSERT( ( unsigned char* ) pos >= this->begin && ( unsigned char* ) pos <= this->end );
-	MM_ASSERT( ( uintptr_t ) pos % this->type_size == 0 );
+	assert( ( unsigned char* ) pos >= this->begin && ( unsigned char* ) pos <= this->end );
+	assert( ( uintptr_t ) pos % this->type_size == 0 );
 	
 	pos = mm_vector_emplace( this, pos );
 
@@ -127,8 +128,8 @@ bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf ) {
 }
 
 void mm_vector_erase( struct mm_vector *this, void *pos, void *buf ){
-	MM_ASSERT( ( unsigned char* ) pos >= this->begin && ( unsigned char* ) pos < this->end );
-	MM_ASSERT( ( uintptr_t ) pos % this->type_size == 0 );
+	assert( ( unsigned char* ) pos >= this->begin && ( unsigned char* ) pos < this->end );
+	assert( ( uintptr_t ) pos % this->type_size == 0 );
 	
 	ptrdiff_t offset = mm_vector_bsize( this ) - ( ( unsigned char* ) pos - this->begin ) - this->type_size;
 

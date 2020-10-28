@@ -1,0 +1,5 @@
+#ifndef MM_ALLOC_H
+#define MM_ALLOC_H
+#include "mm/common.h"
+#include <@MM_ALLOC_INC@>
+#endif
