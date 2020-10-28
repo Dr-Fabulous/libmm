@@ -2,28 +2,79 @@
 #define MM_LIST_H
 #include "mm/common.h"
 
+/*! \file */
+
+/*!
+	\brief Invasive doubly linked list.
+
+	Use by embedding into a struct and passing pointers
+	to the given member variable.
+
+	\code{.c}
+	struct item {
+		struct mm_list pos;
+		int id;
+	};
+
+	static void f( void ) {
+		MM_LIST_DECLARE( items );
+		
+		struct item *i = MM_MALLOC( sizeof( *i ) );
+		mm_list_add( &items, &i->pos ); // pass a pointer to the list element
+	}
+	\endcode
+*/
 typedef struct mm_list {
-	struct mm_list *prev;
-	struct mm_list *next;
+	struct mm_list *prev; //!< pointer to previous node
+	struct mm_list *next; //!< pointer to next node
 } mm_list_t;
 
+/*!
+	\brief Initialize a list.
+
+	An initialized list is made to point at itself in both directions.
+	This turns out to be a more elegant way to handle having no elements.
+	\param head list to initialize.
+*/
 static inline void mm_list_init( struct mm_list *head ) {
 	head->prev = head;
-	head->next = next;
+	head->next = head;
 }
 
+/*!
+	\brief Check if a list is empty.
+	\param head list to check.
+	\return true on being empty.
+*/
 static inline bool mm_list_empty( struct mm_list *head ) {
 	return head->next == head;
 }
 
+/*!
+	\brief Check if a list has only one element.
+	\param head list to check.
+	\return true on having just one element.
+*/
 static inline bool mm_list_has_one( struct mm_list *head ) {
 	return !mm_list_empty( head ) && head->prev == head->next;
 }
 
+/*!
+	\brief Check if a position is the first element in a list.
+	\param head list to check.
+	\param pos node to check.
+	\return true if pos is the first node of head.
+*/
 static inline bool mm_list_is_first( struct mm_list *head, struct mm_list *pos ) {
 	return head->next == pos;
 }
 
+/*!
+	\brief Check if a position is the last element in a list.
+	\param head list to check.
+	\param pos node to check.
+	\return true if pos is the last node of head.
+*/
 static inline bool mm_list_is_last( struct mm_list *head, struct mm_list *pos ) {
 	return head->prev == pos;
 }
@@ -40,24 +91,48 @@ static inline void mm_list_do_del( struct mm_list *prev, struct mm_list *next ) 
 	next->prev = prev;
 }
 
+/*!
+	\brief add element to the head of a list.
+	\param head list to add to.
+	\param pos node to insert.
+*/
 static inline void mm_list_add( struct mm_list *head, struct mm_list *pos ) {
 	mm_list_do_add( head, head->next, pos );
 }
 
+/*!
+	\brief add element to the end of a list.
+	\param head list to add to.
+	\param pos node to insert.
+*/
 static inline void mm_list_add_tail( struct mm_list *head, struct mm_list *pos ) {
 	mm_list_do_add( head->prev, head, pos );
 }
 
+/*!
+	\breif remove a node from it's current list.
+	\param pos node to remove.
+*/
 static inline void mm_list_del( struct mm_list *pos ) {
 	mm_list_do_del( pos->prev, pos->next );
 	mm_list_init( pos );
 }
 
+/*!
+	\brief remove a node from it's current list and add to the beginning of another.
+	\param head list to add node to.
+	\param pos node to move.
+*/
 static inline void mm_list_move( struct mm_list *head, struct mm_list *pos ) {
 	mm_list_do_del( pos->prev, pos->next );
 	mm_list_add( head, pos );
 }
 
+/*!
+	\brief remove a node from it's current list and add to the end of another.
+	\param head list to add node to.
+	\param pos node to move.
+*/
 static inline void mm_list_move_tail( struct mm_list *head, struct mm_list *pos ) {
 	mm_list_do_del( pos->prev, pos->next );
 	mm_list_add_tail( head, pos );
@@ -70,11 +145,21 @@ static inline void mm_list_do_replace( struct mm_list *old_pos, struct mm_list *
 	new_pos->next->prev = new_pos;
 }
 
+/*!
+	\brief remove a node from it's current list and insert a new node at the same position.
+	\param old_pos node to remove.
+	\param new_pos node to insert.
+*/
 static inline void mm_list_replace( struct mm_list *old_pos, struct mm_list *new_pos ) {
 	mm_list_do_replace( old_pos, new_pos );
 	mm_list_init( old_pos );
 }
 
+/*!
+	\breif swap the positions of two nodes in the same list.
+	\param pos_1 node to swap.
+	\param pos_2 node to swap.
+*/
 static inline void mm_list_swap( struct mm_list *pos_1, struct mm_list *pos_2 ) {
 	struct mm_list *tmp = pos_2->prev;
 
