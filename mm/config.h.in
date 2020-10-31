@@ -5,7 +5,8 @@
 #define MM_MAJOR @MM_MAJOR@
 #define MM_MINOR @MM_MINOR@
 #define MM_PATCH @MM_PATCH@
-#define MM_TWEAK @MM_TWEAK@
+#define MM_COMMITS @MM_COMMITS@
+#define MM_HASH @MM_HASH@
 #define MM_C_STD @MM_C_STD@
 #cmakedefine MM_USE_BUILTINS @MM_USE_BUILTINS@
 #cmakedefine MM_USE_NATIVE @MM_USE_NATIVE@

@@ -47,25 +47,18 @@ function( mm_git_version )
 		message( FATAL_ERROR "Invalid git version ( check your tags )" )
 	endif()
 
+	list( GET TOKENS 0 MAJOR )
+	list( GET TOKENS 1 MINOR )
+	list( GET TOKENS 2 PATCH )
+	list( GET TOKENS 3 COMMITS )
+	list( GET TOKENS 4 HASH )
+
 	if( "${GIT_BRANCH}" STREQUAL "dev" OR "${GIT_BRANCH}" STREQUAL "main" )
 		list( REMOVE_AT TOKENS 4 )
 	endif()
 
 	if( "${GIT_BRANCH}" STREQUAL "main" )
 		list( REMOVE_AT TOKENS 3 )
-	endif()
-
-	list( LENGTH TOKENS TOKENS_LENGTH )
-	list( GET TOKENS 0 MAJOR )
-	list( GET TOKENS 1 MINOR )
-	list( GET TOKENS 2 PATCH )
-
-	if ( TOKENS_LENGTH GREATER_EQUAL 4 )
-		list( GET TOKENS 3 COMMITS )
-	endif()
-
-	if ( TOKENS_LENGTH GREATER_EQUAL 5 )
-		list( GET TOKENS 4 HASH )
 	endif()
 
 	string( REPLACE ";" "." VERSION "${TOKENS}" )
