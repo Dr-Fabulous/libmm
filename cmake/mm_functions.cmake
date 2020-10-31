@@ -23,23 +23,6 @@ function( mm_execute_process_required )
 endfunction()
 
 function( mm_git_version )
-	macro( mm_set_git_version PREFIX MAJOR MINOR PATCH TWEAK )
-		set( ${PREFIX}_MAJOR ${MAJOR} PARENT_SCOPE )
-		set( ${PREFIX}_MINOR ${MINOR} PARENT_SCOPE )
-		set( ${PREFIX}_PATCH ${PATCH} PARENT_SCOPE )
-		set( ${PREFIX}_TWEAK ${TWEAK} PARENT_SCOPE )
-
-		# safe to use with cmake
-		set( VERSION ${MAJOR} ${MINOR} ${PATCH} ${TWEAK} )
-		string( REPLACE ";" "." VERSION "${VERSION}" )
-		set( ${PREFIX}_FULL_VERSION ${VERSION} PARENT_SCOPE )
-
-		# patch should be short hash from latest feature commit
-		set( VERSION ${MAJOR} ${MINOR} ${PATCH} )
-		string( REPLACE ";" "." VERSION "${VERSION}" )
-		set( ${PREFIX}_VERSION ${VERSION} PARENT_SCOPE )
-	endmacro()
-
 	cmake_parse_arguments( PARSE_ARGV 0 "ARG" 
 			       ""
 			       "PREFIX"
@@ -54,31 +37,46 @@ function( mm_git_version )
 	mm_execute_process_required( COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
 				     OUTPUT GIT_BRANCH )
 
-	mm_execute_process_required( COMMAND ${GIT_EXECUTABLE} describe --tags --abbrev=0
-				     OUTPUT GIT_TAG )
+	mm_execute_process_required( COMMAND ${GIT_EXECUTABLE} describe --tags --long
+				     OUTPUT GIT_VERSION )
 
+	string( REGEX REPLACE "^([0-9]+).([0-9]+).([0-9]+)-([0-9]+)-([a-zA-Z0-9]+)$" "\\1;\\2;\\3;\\4;\\5" TOKENS "${GIT_VERSION}" )
+	list( LENGTH TOKENS TOKENS_LENGTH )
 
-	string( REGEX MATCHALL "[0-9]+" GIT_TAG_VERSION "${GIT_TAG}" )
-	list( GET GIT_TAG_VERSION 0 GIT_MAJOR )
-	list( GET GIT_TAG_VERSION 1 GIT_MINOR )
+	if( NOT TOKENS_LENGTH )
+		message( FATAL_ERROR "Invalid git version ( check your tags )" )
+	endif()
+
+	if( "${GIT_BRANCH}" STREQUAL "dev" OR "${GIT_BRANCH}" STREQUAL "main" )
+		list( REMOVE_AT TOKENS 4 )
+	endif()
 
 	if( "${GIT_BRANCH}" STREQUAL "main" )
-		mm_set_git_version( ${ARG_PREFIX} ${GIT_MAJOR} ${GIT_MINOR} 0 "" )
-		return()
+		list( REMOVE_AT TOKENS 3 )
 	endif()
 
-	mm_execute_process_required( COMMAND ${GIT_EXECUTABLE} rev-list --count ${GIT_TAG}..dev
-				     OUTPUT GIT_PATCH )
+	list( LENGTH TOKENS TOKENS_LENGTH )
+	list( GET TOKENS 0 MAJOR )
+	list( GET TOKENS 1 MINOR )
+	list( GET TOKENS 2 PATCH )
 
-	if( "${GIT_BRANCH}" STREQUAL "dev" )
-		mm_set_git_version( ${ARG_PREFIX} ${GIT_MAJOR} ${GIT_MINOR} ${GIT_PATCH} "" )
-		return()
+	if ( TOKENS_LENGTH GREATER_EQUAL 4 )
+		list( GET TOKENS 3 COMMITS )
 	endif()
 
-	mm_execute_process_required( COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-				     OUTPUT GIT_TWEAK )
+	if ( TOKENS_LENGTH GREATER_EQUAL 5 )
+		list( GET TOKENS 4 HASH )
+	endif()
 
-	mm_set_git_version( ${ARG_PREFIX} ${GIT_MAJOR} ${GIT_MINOR} ${GIT_PATCH} ${GIT_TWEAK} )
+	string( REPLACE ";" "." VERSION "${TOKENS}" )
+
+	set( ${ARG_PREFIX}_MAJOR ${MAJOR} PARENT_SCOPE )
+	set( ${ARG_PREFIX}_MINOR ${MINOR} PARENT_SCOPE )
+	set( ${ARG_PREFIX}_PATCH ${PATCH} PARENT_SCOPE )
+	set( ${ARG_PREFIX}_COMMITS ${COMMITS} PARENT_SCOPE )
+	set( ${ARG_PREFIX}_HASH ${HASH} PARENT_SCOPE )
+	set( ${ARG_PREFIX}_VERSION ${MAJOR}.${MINOR}.${PATCH} PARENT_SCOPE )
+	set( ${ARG_PREFIX}_FULL_VERSION ${VERSION} PARENT_SCOPE )
 endfunction()
 
 macro( mm_cond_set VAR DEFAULT )

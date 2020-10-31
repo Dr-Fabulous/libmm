@@ -10,6 +10,8 @@ message( STATUS "build type set to '${CMAKE_BUILD_TYPE}'" )
 
 mm_git_version()
 
+message( STATUS " ${GIT_VERSION} ${GIT_FULL_VERSION}" )
+
 project( mm VERSION ${GIT_VERSION}
 	    LANGUAGES C
 	    DESCRIPTION "Jumble of useful C utilities" )
