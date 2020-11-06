@@ -173,18 +173,31 @@ static inline void mm_list_swap( struct mm_list *pos_1, struct mm_list *pos_2 ) 
 	mm_list_add( pos_1, tmp );
 }
 
+/*!
+	\brief Rotate the list such that the current list will be shifted to the left by one space.
+	\param head list to rotate.
+*/
 static inline void mm_list_rotate_left( struct mm_list *head ) {
 	if ( !mm_list_empty( head ) ) {
 		mm_list_move_tail( head, head->next );
 	}
 }
 
+/*!
+	\brief Rotate the list such that the current list will be shifted to the right by one space.
+	\param head list to rotate.
+*/
 static inline void mm_list_rotate_right( struct mm_list *head ) {
 	if ( !mm_list_empty( head ) ) {
 		mm_list_move( head, head->prev );
 	}
 }
 
+/*!
+	\brief Rotate the list such that the provided position is next to the head.
+	\param head list to rotate.
+	\param pos position to rotate to.
+*/
 static inline void mm_list_rotate_to( struct mm_list *head, struct mm_list *pos ) {
 	mm_list_move_tail( head, pos );
 }
@@ -200,6 +213,12 @@ static inline void mm_list_do_cut( struct mm_list *head, struct mm_list *other, 
 	end->prev = head;
 }
 
+/*!
+	\brief Move elements between pos and the tail in a list to another list.
+	\param head list to move elements from.
+	\param pos position in list to begin cut.
+	\param other list to add cut elements to.
+*/
 static inline void mm_list_cut( struct mm_list *head, struct mm_list *other, struct mm_list *pos ) {
 	if ( mm_list_empty( head )
 	|| ( mm_list_has_one( head ) && head != pos && head->next != pos ) ) {
@@ -220,6 +239,11 @@ static inline void mm_list_do_splice( struct mm_list *prev, struct mm_list *next
 	next->prev = head->prev;
 }
 
+/*!
+	\brief Join two lists together, placing new elements at the head.
+	\brief head list to add elements to.
+	\brief other list to take elements from.
+*/
 static inline void mm_list_splice( struct mm_list *head, struct mm_list *other ) {
 	if ( !mm_list_empty( other ) ) {
 		mm_list_do_splice( head, head->next, other );
@@ -227,6 +251,11 @@ static inline void mm_list_splice( struct mm_list *head, struct mm_list *other )
 	}
 }
 
+/*!
+	\brief Join two lists together, placing new elements at the tail.
+	\brief head list to add elements to.
+	\brief other list to take elements from.
+*/
 static inline void mm_list_splice_tail( struct mm_list *head, struct mm_list *other ) {
 	if ( !mm_list_empty( other ) ) {
 		mm_list_do_splice( head->prev, head, other );
@@ -234,27 +263,62 @@ static inline void mm_list_splice_tail( struct mm_list *head, struct mm_list *ot
 	}
 }
 
+/*!
+	\brief Define brace initializer for an empty list.
+	\param name variable the initializer is assigned to.
+*/
 #define MM_LIST_INIT( name )\
 	{ .prev = &name, .next = &name }
 
+/*!
+	\brief Define list variable.
+
+	This should be used to declare all of your list variables.
+*/
 #define MM_LIST_DECLARE( name )\
 	struct mm_list name = MM_LIST_INIT( name )
 
+/*!
+	\brief Iterate across all mm_list nodes.
+	\param head list to iterate across.
+	\param pos mm_list pointer.
+*/
 #define MM_LIST_FOREACH( head, pos )\
 	for ( ( pos ) = ( head )->next;\
 	      ( pos ) != ( head );\
 	      ( pos ) = ( pos )->next )
+/*!
+	\brief Iterate across all mm_list nodes in reverse order.
 
+	\param head list to iterate across.
+	\param pos mm_list pointer.
+*/
 #define MM_LIST_FOREACH_REVERSE( head, pos )\
 	for( ( pos ) = ( head )->prev;\
 	     ( pos ) != ( head );\
 	     ( pos ) = ( pos )->prev )
 
+/*!
+	\brief Iterate across all mm_list nodes.
+
+	It's safe to remove elements while using this loop.
+	\param head list to iterate across.
+	\param pos mm_list pointer.
+	\param tmp mm_list pointer to hold next position.
+*/
 #define MM_LIST_FOREACH_SAFE( head, pos, tmp )\
 	for ( ( pos ) = ( head )->next, ( tmp ) = ( pos )->next;\
 	      ( pos ) != ( head );\
 	      ( pos ) = ( tmp ), ( tmp ) = ( pos )->next )
 
+/*!
+	\brief Iterate across all mm_list nodes in reverse order.
+
+	It's safe to remove elements while using this loop.
+	\param head list to iterate across.
+	\param pos mm_list pointer.
+	\param tmp mm_list pointer to hold next position.
+*/
 #define MM_LIST_FOREACH_REVERSE_SAFE( head, pos, tmp )\
 	for ( ( pos ) = ( head )->prev, ( tmp ) = ( pos )->prev;\
 	      ( pos ) != ( head );\
@@ -272,21 +336,59 @@ static inline void mm_list_splice_tail( struct mm_list *head, struct mm_list *ot
 #define MM_LIST_PREV_CONTAINER( pos, type, member )\
 	MM_CONTAINER_OF( ( pos )->member->prev, type, member )
 
+/*!
+	\brief Iterate across all containers in a list.
+
+	A container here refers to a struct that has a mm_list as a member.
+	\param head list to iterate across.
+	\param pos container pointer.
+	\param type typename for container.
+	\param member member name for mm_list instance inside container.
+*/
 #define MM_LIST_FOREACH_CONTAINER( head, pos, type, member )\
 	for ( ( pos ) = MM_LIST_FIRST_CONTAINER( head, type, member );\
 	      &( pos )->member != ( head );\
 	      ( pos ) = MM_LIST_NEXT_CONTAINER( pos, type, member ) )
 
+/*!
+	\brief Iterate across all containers in a list in reverse order.
+
+	A container here refers to a struct that has a mm_list as a member.
+	\param head list to iterate across.
+	\param pos container pointer.
+	\param type typename for container.
+	\param member member name for mm_list instance inside container.
+*/
 #define MM_LIST_FOREACH_CONTAINER_REVERSE( head, pos, type, member )\
 	for ( ( pos ) = MM_LIST_LAST_CONTAINER( head, type, member );\
 	      &( pos )->member != ( head );\
 	      ( pos ) = MM_LIST_PREV_CONTAINER( pos, type, member ) )
 
+/*!
+	\brief Iterate across all containers in a list.
+
+	A container here refers to a struct that has a mm_list as a member.
+	It's safe to remove elements while using this loop.
+	\param head list to iterate across.
+	\param pos container pointer.
+	\param type typename for container.
+	\param member member name for mm_list instance inside container.
+*/
 #define MM_LIST_FOREACH_CONTAINER_SAFE( head, pos, tmp, type, member )\
 	for ( ( pos ) = MM_LIST_FIRST_CONTAINER( head, type, member ), ( tmp ) = MM_LIST_NEXT_CONTAINER( pos, type, member );\
 	      &( pos )->member != ( head );\
 	      ( pos ) = ( tmp ), ( tmp ) = MM_LIST_NEXT_CONTAINER( pos, type, member ) )
 
+/*!
+	\brief Iterate across all containers in a list in reverse order.
+
+	A container here refers to a struct that has a mm_list as a member.
+	It's safe to remove elements while using this loop.
+	\param head list to iterate across.
+	\param pos container pointer.
+	\param type typename for container.
+	\param member member name for mm_list instance inside container.
+*/
 #define MM_LIST_FOREACH_CONTAINER_REVERSE_SAFE( head, pos, tmp, type, member )\
 	for ( ( pos ) = MM_LIST_LAST_CONTAINER( head, type, member ), ( tmp ) = MM_LIST_PREV_CONTAINER( pos, type, member );\
 	      &( pos )->member != ( head );\
