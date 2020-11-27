@@ -22,6 +22,7 @@ static inline void vlog( FILE *f, enum mm_log_level level, const char *prefix, c
 	va_list tmp;
 	va_copy( tmp, args );
 	vsyslog( level, format, tmp );
+	va_end( tmp );
 #endif
 	MM_FPRINTF( f, "%s", prefix );
 	MM_VFPRINTF( f, format, args );
