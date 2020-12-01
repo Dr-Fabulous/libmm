@@ -19,17 +19,9 @@ target_include_directories( mm PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_D
 				      $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
 				      $<INSTALL_INTERFACE:${MM_INSTALL_INC_DIR}> )
 
-option( MM_OPT_USE_C11 "Use C11 standard. Otherwise uses C99" ON )
-option( MM_OPT_USE_BUILTIN "Use compiler provided builtins" ON )
-option( MM_OPT_USE_NATIVE "Use native instructions where possible ( only applies to GCC )" ON )
-
-if( MM_OPT_USE_C11 )
-	set( MM_C_STD 11 )
-	target_compile_features( mm PUBLIC c_std_11 )
-else()
-	set( MM_C_STD 99 )
-	target_compile_features( mm PUBLIC c_std_99 )
-endif()
+option( MM_USING_C11 "Use C11 standard. Otherwise uses C99" ON )
+option( MM_USING_BUILTINS "Use compiler provided builtins" ON )
+option( MM_USING_NATIVE_BUILTINS "Use native instructions for builtins where possible ( only applies to GCC )" ON )
 
 set( MM_VERSION "\"${GIT_FULL_VERSION}\"" )
 set( MM_MAJOR ${GIT_MAJOR} )
@@ -38,12 +30,44 @@ set( MM_PATCH ${GIT_PATCH} )
 set( MM_COMMITS ${GIT_COMMITS} )
 set( MM_HASH \"${GIT_HASH}\" )
 
-if( MM_OPT_USE_BUILTIN )
-	mm_cond_set( MM_USE_BUILTINS 1 )
+if( MM_USING_C11 )
+	message( STATUS "STD set to 'C11'" )
+	set( MM_C_STD 11 )
+	target_compile_features( mm PUBLIC c_std_11 )
+else()
+	message( STATUS "STD set to 'C99'" )
+	set( MM_C_STD 99 )
+	target_compile_features( mm PUBLIC c_std_99 )
 endif()
 
-if( MM_OPT_USE_NATIVE )
-	mm_cond_set( MM_USE_NATIVE 1 )
+mm_match_any( VAR "${CMAKE_C_COMPILER_ID}"
+	      TOKENS "GNU;Clang"
+	      RESULT "MM_IS_GCC" )
+
+mm_match_any( VAR "${CMAKE_C_COMPILER_ID}"
+	      TOKENS "MSVC"
+	      RESULT "MM_IS_MSVC" )
+
+if( MM_USING_BUILTINS )
+	message( STATUS "using compiler builtins" )
+else()
+	set( MM_USING_NATIVE_BUILTINS 0 )
+endif()
+
+if( MM_USING_BUILTINS AND MM_USING_NATIVE_BUILTINS AND MM_IS_GCC )
+	if ( MM_IS_GCC )
+		message( STATUS "using native builtins" )
+		target_compile_options( mm PUBLIC -mpopcnt
+					   PUBLIC -mclzero )
+	else()
+		message( WARNING "could not detect supported compiler for native builtins" )
+	endif()
+endif()
+
+if( MM_IS_GCC )
+	target_compile_options( mm PRIVATE -pedantic -Wextra -Werror )
+elseif( MM_IS_MSVC )
+	target_compile_options( mm PRIVATE /W4 /WX )
 endif()
 
 mm_cond_set( MM_ALLOC_INC stdlib.h )

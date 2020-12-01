@@ -77,3 +77,13 @@ macro( mm_cond_set VAR DEFAULT )
 		set( ${VAR} ${DEFAULT} )
 	endif()
 endmacro()
+
+function( mm_match_any )
+	cmake_parse_arguments( PARSE_ARGV 0 "ARG"
+			       ""
+			       "VAR;RESULT"
+			       "TOKENS" )
+
+	list( FIND ARG_TOKENS "${ARG_VAR}" OUT )
+	set( ${ARG_RESULT} "${OUT}" PARENT_SCOPE )
+endfunction()

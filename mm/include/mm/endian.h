@@ -2,13 +2,13 @@
 #define MM_ENDIAN_H
 #include "mm/common.h"
 
-#if MM_HAS_INCLUDE( <endian.h> )
+#if MM_GCC_HAS_INCLUDE( <endian.h> )
 #include <endian.h>
-#elif MM_HAS_INCLUDE( <machine/endian.h> )
+#elif MM_GCC_HAS_INCLUDE( <machine/endian.h> )
 #include <machine/endian.h>
-#elif MM_HAS_INCLUDE( <sys/param.h> )
+#elif MM_GCC_HAS_INCLUDE( <sys/param.h> )
 #include <sys/param.h>
-#elif MM_HAS_INCLUDE( <sys/isadefs.h> )
+#elif MM_GCC_HAS_INCLUDE( <sys/isadefs.h> )
 #include <sys/isadefs.h>
 #endif
 
@@ -47,34 +47,32 @@
 #define MM_BIG_ENDIAN 1
 #define MM_BYTE_ORDER MM_BIG_ENDIAN
 #else
-#error "unsupported compiler"
+#error "could not figure out endian order"
 #endif
 
-#ifdef _MSC_VER
+#ifdef MM_USE_BUILTIN && MM_USING_MSVC
 #include <stdlib.h>
-#define mm_bswap_16( i ) _byteswap_ushort( i )
-#define mm_bswap_32( i ) _byteswap_ulong( i )
-#define mm_bswap_64( i ) _byteswap_uint64( i )
-#elif ( __GNUC__ > 4 )\
-   || ( __GNUC__ == 4 && __GNUC__MINOR__ >= 8 )\
-   || MM_HAS_BUILTIN( __builtin_bswap16 )
-#define mm_bswap_16( i ) __builtin_bswap16( i )
-#define mm_bswap_32( i ) __builtin_bswap32( i )
-#define mm_bswap_64( i ) __builtin_bswap64( i )
+#define mm_bswap_u16( i ) _byteswap_ushort( i )
+#define mm_bswap_u32( i ) _byteswap_ulong( i )
+#define mm_bswap_u64( i ) _byteswap_uint64( i )
+#elif MM_USE_BUILTIN && ( MM_GCC_HAS_BUILTIN( __builtin_bswap16 ) || MM_GCC_IS_VERSION_OR_LATER( 4, 8, 0 ) )
+#define mm_bswap_u16( i ) __builtin_bswap16( i )
+#define mm_bswap_u32( i ) __builtin_bswap32( i )
+#define mm_bswap_u64( i ) __builtin_bswap64( i )
 #else
-static inline uint_least16_t mm_bswap_16( uint_least16_t i ) {
+static inline uint_least16_t mm_bswap_u16( uint_least16_t i ) {
 	return ( ( i >> 8 ) & 0xFF )
 	     | ( ( i & 0xFF ) << 8 );
 }
 
-static inline uint_least32_t mm_bswap_32( uint_least32_t i ) {
+static inline uint_least32_t mm_bswap_u32( uint_least32_t i ) {
 	return ( ( i & 0xFF000000 ) >> 24 )
 	     | ( ( i & 0x00FF0000 ) >> 8 )
 	     | ( ( i & 0x0000FF00 ) << 8 )
 	     | ( ( i & 0x000000FF ) << 24 );
 }
 
-static inline uint_least64_t mm_bswap_64( uint_least64_t i ) {
+static inline uint_least64_t mm_bswap_u64( uint_least64_t i ) {
 	return ( ( i & 0xFF00000000000000 ) >> 56 )
 	     | ( ( i & 0x00FF000000000000 ) >> 40 )
 	     | ( ( i & 0x0000FF0000000000 ) >> 24 )
@@ -87,35 +85,35 @@ static inline uint_least64_t mm_bswap_64( uint_least64_t i ) {
 #endif
 
 #ifdef MM_LITTLE_ENDIAN
-#define mm_host_to_net_16( i ) mm_bswap_16( i )
-#define mm_host_to_net_32( i ) mm_bswap_32( i )
-#define mm_host_to_net_64( i ) mm_bswap_64( i )
+#define mm_host_to_net_u16( i ) mm_bswap_u16( i )
+#define mm_host_to_net_u32( i ) mm_bswap_u32( i )
+#define mm_host_to_net_u64( i ) mm_bswap_u64( i )
 
 static inline float mm_host_to_net_float( float f ) {
-	uint_least32_t i = mm_host_to_net_32( *( uint_least32_t* ) &f );
+	uint_least32_t i = mm_host_to_net_u32( *( uint_least32_t* ) &f );
 	return *( float* ) &i;
 }
 
-static inline float mm_host_to_net_double( double d ) {
-	uint_least64_t i = mm_host_to_net_64( *( uint_least64_t* ) &d );
+static inline double mm_host_to_net_double( double d ) {
+	uint_least64_t i = mm_host_to_net_u64( *( uint_least64_t* ) &d );
 	return *( double* ) &i;
 }
 
-#define mm_net_to_host_16( i ) mm_host_to_net_16( i )
-#define mm_net_to_host_32( i ) mm_host_to_net_32( i )
-#define mm_net_to_host_64( i ) mm_host_to_net_64( i )
+#define mm_net_to_host_u16( i ) mm_host_to_net_u16( i )
+#define mm_net_to_host_u32( i ) mm_host_to_net_u32( i )
+#define mm_net_to_host_u64( i ) mm_host_to_net_u64( i )
 #define mm_net_to_host_float( f ) mm_host_to_net_float( f )
 #define mm_net_to_host_double( d ) mm_host_to_net_double( d )
 
 #else
-#define mm_host_to_net_16( i ) ( i )
-#define mm_host_to_net_32( i ) ( i )
-#define mm_host_to_net_64( i ) ( i )
+#define mm_host_to_net_u16( i ) ( i )
+#define mm_host_to_net_u32( i ) ( i )
+#define mm_host_to_net_u64( i ) ( i )
 #define mm_host_to_net_float( f ) ( f )
 #define mm_host_to_net_double( d ) ( d )
-#define mm_net_to_host_16( i ) ( i )
-#define mm_net_to_host_32( i ) ( i )
-#define mm_net_to_host_64( i ) ( i )
+#define mm_net_to_host_u16( i ) ( i )
+#define mm_net_to_host_u32( i ) ( i )
+#define mm_net_to_host_u64( i ) ( i )
 #define mm_net_to_host_float( f ) ( f )
 #define mm_net_to_host_double( d ) ( d )
 #endif
@@ -123,20 +121,20 @@ static inline float mm_host_to_net_double( double d ) {
 /** \def Generically swap bytes from host order to network order ( big endian ) */
 #if MM_C_STD >= 11
 #define mm_host_to_net( i ) _Generic( ( i ),\
-		unsigned short: mm_host_to_net_16,\
-		unsigned int: mm_host_to_net_16,\
-		unsigned long: mm_host_to_net_32,\
-		unsigned long long: mm_host_to_net_64,\
+		unsigned short: mm_host_to_net_u16,\
+		unsigned int: mm_host_to_net_u16,\
+		unsigned long: mm_host_to_net_u32,\
+		unsigned long long: mm_host_to_net_u64,\
 		float: mm_host_to_net_float,\
 		double: mm_host_to_net_double\
 	)( i )
 
 /** \def Generically swap bytes from network order ( big endian ) to host order */
 #define mm_net_to_host( i ) _Generic( ( i ),\
-		unsigned short: mm_net_to_host_16,\
-		unsigned int: mm_net_to_host_16,\
-		unsigned long: mm_net_to_host_32,\
-		unsigned long long: mm_net_to_host_64\
+		unsigned short: mm_net_to_host_u16,\
+		unsigned int: mm_net_to_host_u16,\
+		unsigned long: mm_net_to_host_u32,\
+		unsigned long long: mm_net_to_host_u64\
 		float: mm_net_to_host_float,\
 		double: mm_net_to_host_double\
 	)( i )

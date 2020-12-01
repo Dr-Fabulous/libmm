@@ -3,7 +3,7 @@
 #include <stdarg.h>
 #include "mm/common.h"
 
-#if MM_HAS_INCLUDE( <syslog.h> )
+#if MM_GCC_HAS_INCLUDE( <syslog.h> )
 #define _BSD_SOURCE
 #include <syslog.h>
 #define MM_USING_SYSLOG

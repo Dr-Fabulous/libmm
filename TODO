@@ -1,5 +1,4 @@
 - document other finished files
-- remove type_size and type_cmp from mm_vector
 - finish bit.h
 - implement mm_rbtree, include set operations
 - implement mm_deque

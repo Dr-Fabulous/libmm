@@ -6,11 +6,11 @@ if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE Release )
 endif()
 
-message( STATUS "build type set to '${CMAKE_BUILD_TYPE}'" )
+message( STATUS "build set to '${CMAKE_BUILD_TYPE}'" )
 
 mm_git_version()
 
-message( STATUS " ${GIT_VERSION} ${GIT_FULL_VERSION}" )
+message( STATUS "version '${GIT_FULL_VERSION}'" )
 
 project( mm VERSION ${GIT_VERSION}
 	    LANGUAGES C

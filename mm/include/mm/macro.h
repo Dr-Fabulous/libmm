@@ -4,6 +4,13 @@
 /*! \file */
 
 /*!
+	\param type type to get bitsize of
+	\return total number of bits in given type
+*/
+#define MM_BITSOF( type )\
+	( sizeof( type ) * CHAR_BIT )
+
+/*!
 	\param arr C array.
 	\return total size of array in elements.
 */

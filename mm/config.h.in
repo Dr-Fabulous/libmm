@@ -8,21 +8,21 @@
 #define MM_COMMITS @MM_COMMITS@
 #define MM_HASH @MM_HASH@
 #define MM_C_STD @MM_C_STD@
-#cmakedefine MM_USE_BUILTINS @MM_USE_BUILTINS@
-#cmakedefine MM_USE_NATIVE @MM_USE_NATIVE@
-#cmakedefine MM_ALLOC_INC @MM_ALLOC_INC@
-#cmakedefine MM_MALLOC @MM_MALLOC@
-#cmakedefine MM_CALLOC @MM_CALLOC@
-#cmakedefine MM_REALLOC @MM_REALLOC@
-#cmakedefine MM_FREE @MM_FREE@
-#cmakedefine MM_STDIN @MM_STDIN@
-#cmakedefine MM_STDOUT @MM_STDOUT@
-#cmakedefine MM_STDERR @MM_STDERR@
-#cmakedefine MM_PRINTF @MM_PRINTF@
-#cmakedefine MM_VPRINTF @MM_VPRINTF@
-#cmakedefine MM_VFPRINTF @MM_VFPRINTF@
-#cmakedefine MM_FPRINTF @MM_FPRINTF@
-#cmakedefine MM_SPRINTF @MM_SPRINTF@
-#cmakedefine MM_FFLUSH @MM_FFLUSH@
+#cmakedefine MM_USING_BUILTINS 1
+#cmakedefine MM_USING_NATIVE_BUILTINS 1
+#define MM_ALLOC_INC @MM_ALLOC_INC@
+#define MM_MALLOC @MM_MALLOC@
+#define MM_CALLOC @MM_CALLOC@
+#define MM_REALLOC @MM_REALLOC@
+#define MM_FREE @MM_FREE@
+#define MM_STDIN @MM_STDIN@
+#define MM_STDOUT @MM_STDOUT@
+#define MM_STDERR @MM_STDERR@
+#define MM_PRINTF @MM_PRINTF@
+#define MM_VPRINTF @MM_VPRINTF@
+#define MM_VFPRINTF @MM_VFPRINTF@
+#define MM_FPRINTF @MM_FPRINTF@
+#define MM_SPRINTF @MM_SPRINTF@
+#define MM_FFLUSH @MM_FFLUSH@
 
 #endif

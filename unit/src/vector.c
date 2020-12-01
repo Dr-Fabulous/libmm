@@ -76,6 +76,8 @@ MM_UNIT_CASE( move_case, NULL, NULL ) {
 	MM_UNIT_ASSERT_EQ( mm_vector_null( &v2 ), false );
 
 	mm_vector_destroy( &v2 );
+
+	return MM_UNIT_DONE;
 }
 
 MM_UNIT_CASE( insert_case, NULL, NULL ) {
@@ -91,6 +93,8 @@ MM_UNIT_CASE( insert_case, NULL, NULL ) {
 	MM_UNIT_ASSERT_EQ( mm_vector_insert( &v, mm_vector_at( &v, 10 ), &i ), true );
 
 	mm_vector_destroy( &v );
+
+	return MM_UNIT_DONE;
 }
 
 MM_UNIT_SUITE( vector_suite ) {
