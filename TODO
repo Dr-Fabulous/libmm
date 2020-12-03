@@ -1,6 +1,4 @@
-- document other finished files
-- finish bit.h
-- implement mm_rbtree, include set operations
+- implement mm_rbtree
 - implement mm_deque
 - implement rank select dictionary, later add dynamic version
 - implement a generic binary format, for potential use as storage or networking

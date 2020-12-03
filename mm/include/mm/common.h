@@ -26,6 +26,13 @@
 #error "unsupported compiler"
 #endif
 
+// inline
+#ifdef MM_USING_GCC
+#define MM_FORCE_INLINE __attribute__(( always_inline ))
+#elif defined( MM_USING_MSVC )
+#define MM_FORCE_INLINE __forceinline
+#endif
+
 // exports
 #ifdef MM_USING_GCC
 #define MM_IMPORT

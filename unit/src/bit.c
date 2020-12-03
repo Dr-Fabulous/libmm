@@ -13,21 +13,22 @@ static uintmax_t count_bits( uintmax_t i ) {
 
 MM_UNIT_CASE( popcnt_case, NULL, NULL ) {
 	for ( unsigned short i = 1; i < USHRT_MAX; ++i ) {
-		MM_UNIT_ASSERT_EQ( count_bits( i ), mm_popcount_u16( i ) );
+		MM_UNIT_ASSERT_EQ( count_bits( i ), mm_popcount_hu( i ) );
 	}
 
 	for ( unsigned long i = 1; i < USHRT_MAX; ++i ) {
-		MM_UNIT_ASSERT_EQ( count_bits( i << 8 ), mm_popcount_u32( i << 8 ) );
+		MM_UNIT_ASSERT_EQ( count_bits( i << 8 ), mm_popcount_lu( i << 8 ) );
 	}
 
 	for ( unsigned long long i = 1; i < USHRT_MAX; ++i ) {
-		MM_UNIT_ASSERT_EQ( count_bits( i << 16 ), mm_popcount_u64( i << 16 ) );
+		MM_UNIT_ASSERT_EQ( count_bits( i << 16 ), mm_popcount_llu( i << 16 ) );
 	}
 
 	return MM_UNIT_DONE;
 }
 
 static uintmax_t clz( uintmax_t i, uintmax_t n ) {
+	--n;
 	uintmax_t c = 0;
 	
 	while( !( ( i >> n) & 1 ) ) {
@@ -40,15 +41,15 @@ static uintmax_t clz( uintmax_t i, uintmax_t n ) {
 
 MM_UNIT_CASE( clz_case, NULL, NULL ) {
 	for ( unsigned short i = 1; i < USHRT_MAX; ++i ) {
-		MM_UNIT_ASSERT_EQ( clz( i, 15 ), mm_clz_u16( i ) );
+		MM_UNIT_ASSERT_EQ( clz( i, MM_BITSOF( i ) ), mm_clz_hu( i ) );
 	}
 
 	for ( unsigned long i = 1; i < USHRT_MAX; ++i ) {
-		MM_UNIT_ASSERT_EQ( clz( i << 8, 31 ), mm_clz_u32( i << 8 ) );
+		MM_UNIT_ASSERT_EQ( clz( i << 8, MM_BITSOF( i ) ), mm_clz_lu( i << 8 ) );
 	}
 
 	for ( unsigned long long i = 1; i < USHRT_MAX; ++i ) {
-		MM_UNIT_ASSERT_EQ( clz( i << 16, 63 ), mm_clz_u64( i << 16 ) );
+		MM_UNIT_ASSERT_EQ( clz( i << 16, MM_BITSOF( i ) ), mm_clz_llu( i << 16 ) );
 	}
 
 	return MM_UNIT_DONE;
@@ -67,16 +68,15 @@ static uintmax_t ctz( uintmax_t i ) {
 
 MM_UNIT_CASE( ctz_case, NULL, NULL ) {
 	for ( unsigned short i = 1; i < USHRT_MAX; ++i ) {
-		mm_log( MM_INFO, "%hu %hu %hu", i, ctz( i ), mm_ctz_u16( i ) );
-		MM_UNIT_ASSERT_EQ( ctz( i ), mm_ctz_u16( i ) );
+		MM_UNIT_ASSERT_EQ( ctz( i ), mm_ctz_hu( i ) );
 	}
 
 	for ( unsigned long i = 1; i < USHRT_MAX; ++i ) {
-		MM_UNIT_ASSERT_EQ( ctz( i << 8 ), mm_ctz_u32( i << 8 ) );
+		MM_UNIT_ASSERT_EQ( ctz( i << 8 ), mm_ctz_lu( i << 8 ) );
 	}
 
 	for ( unsigned long long i = 1; i < USHRT_MAX; ++i ) {
-		MM_UNIT_ASSERT_EQ( ctz( i << 16 ), mm_ctz_u64( i << 16 ) );
+		MM_UNIT_ASSERT_EQ( ctz( i << 16 ), mm_ctz_llu( i << 16 ) );
 	}
 
 	return MM_UNIT_DONE;
