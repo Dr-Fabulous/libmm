@@ -12,8 +12,7 @@
 	A mm_vector without any allocated memory is referred to as a NULL mm_vector.
 */
 typedef struct mm_vector {
-	size_t type_size; //!< \brief size of stored type in bytes
-	int ( *type_cmp )( const void*, const void* ); //!< \brief comparator function
+	bool dynamic; //!< \breif true if vector is using dynamic memory
 	unsigned char *begin; //!< \brief start of allocated memory
 	unsigned char *end; //!< \brief end of allocated memory used for inserted elements
 	unsigned char *capacity; //!< \brief end of allocated memory
@@ -29,7 +28,16 @@ typedef struct mm_vector {
 	\param capacity how many elments to allocate space for.
 	\return true or false depending on success to allocate memory.
 */
-MM_API bool mm_vector_construct( struct mm_vector *this, size_t type_size, size_t capacity );
+MM_API bool mm_vector_construct( struct mm_vector *this, size_t capacity, size_t type_size );
+
+/*!
+	\breif initialize a mm_vector with a pre-allocated or static memory buffer.
+
+	\param this mm_vector to initialize
+	\param buf memory to use as vector storage
+	\param size number of bytes availible in buf
+*/
+MM_API void mm_vector_construct_with_buf( struct mm_vector *this, void *buf, size_t size );
 
 /*!
 	\brief copy from one mm_vector to another.
@@ -56,7 +64,7 @@ MM_API void mm_vector_destroy( struct mm_vector *this );
 	\return true if the mm_vector hasn't been allocated any memory.
 */
 static inline bool mm_vector_null( struct mm_vector *this ) {
-	return this->begin == this->capacity;
+	return this->dynamic && this->begin == this->capacity;
 }
 
 /*!
@@ -79,8 +87,8 @@ static inline size_t mm_vector_bcapacity( struct mm_vector *this ) {
 	\param this pointer to mm_vector.
 	\return current storage capacity of mm_vector in elements.
 */
-static inline size_t mm_vector_capacity( struct mm_vector *this) {
-	return mm_vector_bcapacity( this ) / this->type_size;
+static inline size_t mm_vector_capacity( struct mm_vector *this, size_t type_size ) {
+	return mm_vector_bcapacity( this ) / type_size;
 }
 
 /*!
@@ -95,8 +103,8 @@ static inline size_t mm_vector_bsize( struct mm_vector *this ) {
 	\param this pointer to mm_vector.
 	\return return number of elements in mm_vector.
 */
-static inline size_t mm_vector_size( struct mm_vector *this ) {
-	return mm_vector_bsize( this ) / this->type_size;
+static inline size_t mm_vector_size( struct mm_vector *this, size_t type_size ) {
+	return mm_vector_bsize( this ) / type_size;
 }
 
 /*!
@@ -110,7 +118,7 @@ static inline size_t mm_vector_size( struct mm_vector *this ) {
 	\param new_capacity total storage as a number of elements.
 	\return false if memory cannot be allocated.
 */
-MM_API bool mm_vector_set_capacity( struct mm_vector *this, size_t new_capacity );
+MM_API bool mm_vector_set_capacity( struct mm_vector *this, size_t new_capacity, size_t type_size );
 
 /*!
 	\brief set size of a mm_vector.
@@ -124,7 +132,7 @@ MM_API bool mm_vector_set_capacity( struct mm_vector *this, size_t new_capacity 
 	\param new_size total size of mm_vector as a number of elements.
 	\return false if memory cannot be allocated.
 */
-MM_API bool mm_vector_resize( struct mm_vector *this, size_t new_size );
+MM_API bool mm_vector_resize( struct mm_vector *this, size_t new_size, size_t type_size );
 
 /*!
 	\brief Allocate N extra spaces inside a mm_vector.
@@ -135,16 +143,16 @@ MM_API bool mm_vector_resize( struct mm_vector *this, size_t new_size );
 	\param delta number of spaces to allocate.
 	\return false if memory cannot be allocated.
 */
-static inline bool mm_vector_reserve( struct mm_vector *this, size_t delta ) {
-	return mm_vector_set_capacity( this, mm_vector_capacity( this ) + delta );
+static inline bool mm_vector_reserve( struct mm_vector *this, size_t delta, size_t type_size ) {
+	return mm_vector_set_capacity( this, mm_vector_capacity( this, type_size ) + delta, type_size );
 }
 
 /*!
 	\brief Reduce mm_vector capacity to the current size.
 	\param this pointer to a mm_vector.
 */
-static inline void mm_vector_shrink( struct mm_vector *this ) {
-	mm_vector_set_capacity( this, mm_vector_size( this ) );
+static inline void mm_vector_shrink( struct mm_vector *this, size_t type_size ) {
+	mm_vector_set_capacity( this, mm_vector_size( this, type_size ), type_size );
 }
 
 /*!
@@ -167,8 +175,8 @@ static inline void mm_vector_clear( struct mm_vector *this ) {
 	\param idx position to index.
 	\return pointer to given element.
 */
-static inline void* mm_vector_at( struct mm_vector *this, size_t idx ) {
-	return this->begin + this->type_size * idx;
+static inline void* mm_vector_at( struct mm_vector *this, size_t idx, size_t type_size ) {
+	return this->begin + type_size * idx;
 }
 
 /*!
@@ -191,9 +199,9 @@ static inline void* mm_vector_end( struct mm_vector *this ) {
 	\brief Get pointer to element at the back of a mm_vector.
 	\param this pointer to a mm_vector.
 */
-static inline void* mm_vector_back( struct mm_vector *this ) {
+static inline void* mm_vector_back( struct mm_vector *this, size_t type_size ) {
 	if ( mm_vector_null( this ) ) {
-		return this->end - this->type_size;
+		return this->end - type_size;
 	} else {
 		return NULL;
 	}
@@ -208,7 +216,7 @@ static inline void* mm_vector_back( struct mm_vector *this ) {
 	\param buf pointer to a value to search for.
 	\return pointer to element in mm_vector on success or NULL if it cannot be found.
 */
-MM_API void* mm_vector_find( struct mm_vector *this, void *buf );
+MM_API void* mm_vector_find( struct mm_vector *this, void *buf, size_t type_size, int ( *cmp )( const void*, const void* ) );
 
 
 /*!
@@ -220,13 +228,13 @@ MM_API void* mm_vector_find( struct mm_vector *this, void *buf );
 	\param buf pointer to a value to search for.
 	\return pointer to element in mm_vector on success or NULL if it cannot be found.
 */
-static inline void* mm_vector_search( struct mm_vector *this, void *buf ) {
+static inline void* mm_vector_search( struct mm_vector *this, void *buf, size_t type_size, int ( *cmp )( const void*, const void* ) ) {
 	return bsearch(
 		buf,
 		mm_vector_begin( this ),
 		mm_vector_bsize( this ),
-		this->type_size,
-		this->type_cmp
+		type_size,
+		cmp
 	);
 }
 
@@ -237,12 +245,12 @@ static inline void* mm_vector_search( struct mm_vector *this, void *buf ) {
 
 	\param this pointer to a mm_vector.
 */
-static inline void mm_vector_sort( struct mm_vector *this ) {
+static inline void mm_vector_sort( struct mm_vector *this, size_t type_size, int ( *cmp )( const void*, const void* ) ) {
 	qsort(
 		mm_vector_begin( this ),
 		mm_vector_bsize( this ),
-		this->type_size,
-		this->type_cmp
+		type_size,
+		cmp
 	);
 }
 
@@ -256,7 +264,7 @@ static inline void mm_vector_sort( struct mm_vector *this ) {
 	\param pos pointer to a position within a mm_vector.
 	\return pointer to newly inserted element. Returns NULL upon failure to allocate memory.
 */
-MM_API void* mm_vector_emplace( struct mm_vector *this, void *pos );
+MM_API void* mm_vector_emplace( struct mm_vector *this, void *pos, size_t type_size );
 
 /*!
 	\brief Insert a new element at a given position.
@@ -265,15 +273,15 @@ MM_API void* mm_vector_emplace( struct mm_vector *this, void *pos );
 	\param buf pointer to a value.
 	\return false on failure to allocate memory.
 */
-MM_API bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf );
+MM_API bool mm_vector_insert( struct mm_vector *this, void *pos, void *buf, size_t type_size );
 
 /*!
 	\brief Emplace an element at the front of a mm_vector.
 	\param this pointer to a mm_vector.
 	\return pointer to newly inserted element. Returns NULL upon failure to allocate memory.
 */
-static inline void* mm_vector_emplace_front( struct mm_vector *this ) {
-	return mm_vector_emplace( this, this->begin );
+static inline void* mm_vector_emplace_front( struct mm_vector *this, size_t type_size ) {
+	return mm_vector_emplace( this, this->begin, type_size );
 }
 
 /*!
@@ -281,8 +289,8 @@ static inline void* mm_vector_emplace_front( struct mm_vector *this ) {
 	\param this pointer to a mm_vector.
 	\return pointer to newly inserted element. Returns NULL upon failure to allocate memory.
 */
-static inline void* mm_vector_emplace_back( struct mm_vector *this ) {
-	return mm_vector_emplace( this, this->end );
+static inline void* mm_vector_emplace_back( struct mm_vector *this, size_t type_size ) {
+	return mm_vector_emplace( this, this->end, type_size );
 }
 
 /*!
@@ -291,8 +299,8 @@ static inline void* mm_vector_emplace_back( struct mm_vector *this ) {
 	\param buf pointer to a value.
 	\return false upon failure to allocate memory.
 */
-static inline bool mm_vector_push_front( struct mm_vector *this, void *buf ) {
-	return mm_vector_insert( this, this->begin, buf );
+static inline bool mm_vector_push_front( struct mm_vector *this, void *buf, size_t type_size ) {
+	return mm_vector_insert( this, this->begin, buf, type_size );
 }
 
 /*!
@@ -301,8 +309,8 @@ static inline bool mm_vector_push_front( struct mm_vector *this, void *buf ) {
 	\param buf pointer to a value.
 	\return false upon failure to allocate memory.
 */
-static inline bool mm_vector_push_back( struct mm_vector *this, void *buf ) {
-	return mm_vector_insert( this, this->end, buf );
+static inline bool mm_vector_push_back( struct mm_vector *this, void *buf, size_t type_size ) {
+	return mm_vector_insert( this, this->end, buf, type_size );
 }
 
 /*!
@@ -311,15 +319,15 @@ static inline bool mm_vector_push_back( struct mm_vector *this, void *buf ) {
 	\param pos element to remove.
 	\param buf buffer to copy element into before removal. Can be NULL.
 */
-MM_API void mm_vector_erase( struct mm_vector *this, void *pos, void *buf );
+MM_API void mm_vector_erase( struct mm_vector *this, void *pos, void *buf, size_t type_size );
 
 /*!
 	\brief Remove element from the front of a mm_vector.
 	\param this pointer to a mm_vector.
 	\param buf buffer to copy element into before removal. Can be NULL.
 */
-static inline void mm_vector_pop_front( struct mm_vector *this, void *buf ) {
-	mm_vector_erase( this, this->end - this->type_size, buf );
+static inline void mm_vector_pop_front( struct mm_vector *this, void *buf, size_t type_size ) {
+	mm_vector_erase( this, this->begin, buf, type_size );
 }
 
 /*!
@@ -327,42 +335,44 @@ static inline void mm_vector_pop_front( struct mm_vector *this, void *buf ) {
 	\param this pointer to a mm_vector.
 	\param buf buffer to copy element into before removal. Can be NULL.
 */
-static inline void mm_vector_pop_back( struct mm_vector *this, void *buf ) {
-	mm_vector_erase( this, this->end - this->type_size, buf );
+static inline void mm_vector_pop_back( struct mm_vector *this, void *buf, size_t type_size ) {
+	mm_vector_erase( this, this->end - type_size, buf, type_size );
 }
 
 /*!
-	\brief Initialize a NULL mm_vector for the given type and cmp
-	\param type type or expression that can be passed to sizeof()
-	\param cmp function pointer to comparison function, must fit the following prototype. int ( *cmp )( const void*, const void* )
+	\brief Declare mm_vector variable
+	\param name name of the variable
 */
-#define MM_VECTOR_INIT( type, cmp )\
-	{ .type_size = sizeof( type ), .type_cmp = cmp }
+#define MM_VECTOR_DECLARE( name )\
+	struct mm_vector name = { .dynamic = true }
 
 /*!
-	\brief Declare mm_vector variable initialized to a given type.
+	\brief Declare mm_vector variable initialized with static memory
 	\param name name of the variable
-	\param type type or expression that can be passed to sizeof()
-	\param cmp function pointer to comparison function, must fit the following prototype. int ( *cmp )( const void*, const void* )
+	\param size no of bytes to allocate
 */
-#define MM_VECTOR_DECLARE( name, type, cmp )\
-	struct mm_vector name = MM_VECTOR_INIT( type, cmp )
+#define MM_VECTOR_DECLARE_STATIC( name, size )\
+	unsigned char name##_buf[ size ] = { 0 };\
+	struct mm_vector name = { .dynamic = false,\
+				  .begin = name##_buf,\
+				  .end = name##_buf,\
+				  .capacity = name##_buf + sizeof( name##_buf ) }
 
 /*!
 	\brief Get pointer to next element in a mm_vector.
 	\param vec pointer to a mm_vector.
 	\param pos pointer to move from.
 */
-#define MM_VECTOR_NEXT( vec, pos )\
-	( ( void* ) ( ( unsigned char* ) ( pos ) + ( vec )->type_size ) )
+#define MM_VECTOR_NEXT( pos, type_size )\
+	( ( void* ) ( ( unsigned char* ) ( pos ) + ( type_size ) ) )
 
 /*!
 	\brief Get pointer to previous element in a mm_vector.
 	\param vec pointer to a mm_vector.
 	\param pos pointer to move from.
 */
-#define MM_VECTOR_PREV( vec, pos )\
-	( ( void* ) ( ( unsigned char* ) ( pos ) - ( vec )->type_size ) )
+#define MM_VECTOR_PREV( pos, type_size )\
+	( ( void* ) ( ( unsigned char* ) ( pos ) - ( type_size ) ) )
 
 /*!
 	\brief Get a pointer to an element in a mm_vector casted to a particular type.
@@ -371,17 +381,17 @@ static inline void mm_vector_pop_back( struct mm_vector *this, void *buf ) {
 	\param type type to cast as.
 */
 #define MM_VECTOR_AT_AS( vec, pos, type )\
-	( ( type* ) mm_vector_at( vec, pos ) )
+	( ( type* ) mm_vector_at( vec, pos, sizeof( type ) ) )
 
 /*!
 	\brief Iterate across each element in a mm_vector.
 	\param vec pointer to a mm_vector.
 	\param pos pointer to hold current position.
 */
-#define MM_VECTOR_FOR_EACH( vec, pos )\
+#define MM_VECTOR_FOR_EACH( vec, pos, type_size )\
 	for( ( pos ) = mm_vector_begin( vec );\
 	     ( pos ) < mm_vector_end( vec );\
-	     ( pos ) = MM_VECTOR_NEXT( vec, pos ) )
+	     ( pos ) = MM_VECTOR_NEXT( pos, type_size ) )
 
 /*!
 	\brief Iterate each element backwards in a mm_vector.
@@ -391,8 +401,8 @@ static inline void mm_vector_pop_back( struct mm_vector *this, void *buf ) {
 	\param vec pointer to a mm_vector.
 	\param pos pointer to hold current position.
 */
-#define MM_VECTOR_FOR_EACH_REVERSE( vec, pos )\
+#define MM_VECTOR_FOR_EACH_REVERSE( vec, pos, type_size )\
 	for( ( pos ) < mm_vector_end( vec );\
 	     ( pos ) >= mm_vector_begin( vec );\
-	     ( pos ) = MM_VECTOR_PREV( vec, pos ) )
+	     ( pos ) = MM_VECTOR_PREV( pos, type_size ) )
 #endif

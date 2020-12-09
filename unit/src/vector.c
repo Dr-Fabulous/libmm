@@ -3,51 +3,51 @@
 #include "mm/unit.h"
 
 MM_UNIT_CASE( empty_case, NULL, NULL ) {
-	MM_VECTOR_DECLARE( v, int, NULL );
+	MM_VECTOR_DECLARE( v );
 	MM_UNIT_ASSERT_EQ( mm_vector_null( &v ), true );
 
 	return MM_UNIT_DONE;
 }
 
 MM_UNIT_CASE( push_case, NULL, NULL ) {
-	MM_VECTOR_DECLARE( v, int, NULL );
+	MM_VECTOR_DECLARE( v );
 
 	for ( int i = 0; i < 10; ++i ) {
-		MM_UNIT_ASSERT_EQ( mm_vector_push_back( &v, &i ), true );
+		MM_UNIT_ASSERT_EQ( mm_vector_push_back( &v, &i, sizeof( i ) ), true );
 	}
 
-	MM_UNIT_ASSERT_EQ( mm_vector_size( &v ), 10 );
+	MM_UNIT_ASSERT_EQ( mm_vector_size( &v, sizeof( int ) ), 10 );
 	mm_vector_destroy( &v );
 
 	return MM_UNIT_DONE;
 }
 
 MM_UNIT_CASE( stack_case, NULL, NULL ) {
-	MM_VECTOR_DECLARE( v, int, NULL );
+	MM_VECTOR_DECLARE( v );
 
 	for ( int i = 0; i < 10; ++i ) {
-		MM_UNIT_ASSERT_EQ( mm_vector_push_back( &v, &i ), true );
+		MM_UNIT_ASSERT_EQ( mm_vector_push_back( &v, &i, sizeof( i ) ), true );
 	}
 
 	for ( int i = 9, j = 0; i >= 0; --i ) {
-		mm_vector_pop_back( &v, &j );
+		mm_vector_pop_back( &v, &j, sizeof( j ) );
 		MM_UNIT_ASSERT_EQ( i, j );
 	}
 
-	MM_UNIT_ASSERT_EQ( mm_vector_size( &v ), 0 );
+	MM_UNIT_ASSERT_EQ( mm_vector_size( &v, sizeof( int ) ), 0 );
 	MM_UNIT_ASSERT_EQ( mm_vector_null( &v ), false );
-	MM_UNIT_ASSERT_EQ( mm_vector_set_capacity( &v, 0 ), true );
+	MM_UNIT_ASSERT_EQ( mm_vector_set_capacity( &v, 0, sizeof( int ) ), true );
 	MM_UNIT_ASSERT_EQ( mm_vector_null( &v ), true );
 
 	return MM_UNIT_DONE;
 }
 
 MM_UNIT_CASE( copy_case, NULL, NULL ) {
-	MM_VECTOR_DECLARE( v1, int, NULL );
-	MM_VECTOR_DECLARE( v2, int, NULL );
+	MM_VECTOR_DECLARE( v1 );
+	MM_VECTOR_DECLARE( v2 );
 
 	for ( int i = 0; i < 100; ++i ) {
-		MM_UNIT_ASSERT_EQ( mm_vector_push_back( &v1, &i ), true );
+		MM_UNIT_ASSERT_EQ( mm_vector_push_back( &v1, &i, sizeof( i ) ), true );
 	}
 
 	MM_UNIT_ASSERT_EQ( mm_vector_copy( &v2, &v1 ), true );
@@ -63,11 +63,11 @@ MM_UNIT_CASE( copy_case, NULL, NULL ) {
 }
 
 MM_UNIT_CASE( move_case, NULL, NULL ) {
-	MM_VECTOR_DECLARE( v1, int, NULL );
-	MM_VECTOR_DECLARE( v2, int, NULL );
+	MM_VECTOR_DECLARE( v1 );
+	MM_VECTOR_DECLARE( v2 );
 
 	for ( int i = 0; i < 100; ++i ) {
-		MM_UNIT_ASSERT_EQ( mm_vector_push_back( &v1, &i ), true );
+		MM_UNIT_ASSERT_EQ( mm_vector_push_back( &v1, &i, sizeof( i ) ), true );
 	}
 
 	mm_vector_move( &v2, &v1 );
@@ -81,18 +81,29 @@ MM_UNIT_CASE( move_case, NULL, NULL ) {
 }
 
 MM_UNIT_CASE( insert_case, NULL, NULL ) {
-	MM_VECTOR_DECLARE( v, int, NULL );
+	MM_VECTOR_DECLARE( v );
 
 	int i = 0;
 
 	for ( i = 0; i < 100; ++i ) {
-		MM_UNIT_ASSERT_EQ( mm_vector_push_back( &v, &i ), true );
+		MM_UNIT_ASSERT_EQ( mm_vector_push_back( &v, &i, sizeof( i ) ), true );
 	}
 
 	i = 100;
-	MM_UNIT_ASSERT_EQ( mm_vector_insert( &v, mm_vector_at( &v, 10 ), &i ), true );
+	MM_UNIT_ASSERT_EQ( mm_vector_insert( &v, mm_vector_at( &v, 10, sizeof( i ) ), &i, sizeof( i ) ), true );
 
 	mm_vector_destroy( &v );
+
+	return MM_UNIT_DONE;
+}
+
+MM_UNIT_CASE( static_case, NULL, NULL ) {
+	MM_VECTOR_DECLARE_STATIC( v, 2 * sizeof( int ) );
+
+	MM_UNIT_ASSERT_EQ( mm_vector_null( &v ), false );
+	MM_UNIT_ASSERT_NOT_EQ( mm_vector_emplace_back( &v, sizeof( int ) ), NULL );
+	MM_UNIT_ASSERT_NOT_EQ( mm_vector_emplace_back( &v, sizeof( int ) ), NULL );
+	MM_UNIT_ASSERT_EQ( mm_vector_emplace_back( &v, sizeof( int ) ), NULL );
 
 	return MM_UNIT_DONE;
 }
@@ -104,6 +115,7 @@ MM_UNIT_SUITE( vector_suite ) {
 	MM_UNIT_RUN( copy_case );
 	MM_UNIT_RUN( move_case );
 	MM_UNIT_RUN( insert_case );
+	MM_UNIT_RUN( static_case );
 
 	return MM_UNIT_DONE;
 }
