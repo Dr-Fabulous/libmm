@@ -60,19 +60,19 @@
 #define mm_bswap_u32( i ) __builtin_bswap32( i )
 #define mm_bswap_u64( i ) __builtin_bswap64( i )
 #else
-static inline uint_least16_t mm_bswap_u16( uint_least16_t i ) {
+static inline uint16_t mm_bswap_u16( uint16_t i ) {
 	return ( ( i >> 8 ) & 0xFF )
 	     | ( ( i & 0xFF ) << 8 );
 }
 
-static inline uint_least32_t mm_bswap_u32( uint_least32_t i ) {
+static inline uint32_t mm_bswap_u32( uint32_t i ) {
 	return ( ( i & 0xFF000000 ) >> 24 )
 	     | ( ( i & 0x00FF0000 ) >> 8 )
 	     | ( ( i & 0x0000FF00 ) << 8 )
 	     | ( ( i & 0x000000FF ) << 24 );
 }
 
-static inline uint_least64_t mm_bswap_u64( uint_least64_t i ) {
+static inline uint64_t mm_bswap_u64( uint64_t i ) {
 	return ( ( i & 0xFF00000000000000 ) >> 56 )
 	     | ( ( i & 0x00FF000000000000 ) >> 40 )
 	     | ( ( i & 0x0000FF0000000000 ) >> 24 )
@@ -90,12 +90,12 @@ static inline uint_least64_t mm_bswap_u64( uint_least64_t i ) {
 #define mm_host_to_net_u64( i ) mm_bswap_u64( i )
 
 static inline float mm_host_to_net_float( float f ) {
-	uint_least32_t i = mm_host_to_net_u32( *( uint_least32_t* ) &f );
+	uint32_t i = mm_host_to_net_u32( *( uint32_t* ) &f );
 	return *( float* ) &i;
 }
 
 static inline double mm_host_to_net_double( double d ) {
-	uint_least64_t i = mm_host_to_net_u64( *( uint_least64_t* ) &d );
+	uint64_t i = mm_host_to_net_u64( *( uint64_t* ) &d );
 	return *( double* ) &i;
 }
 
@@ -121,18 +121,18 @@ static inline double mm_host_to_net_double( double d ) {
 /** \def Generically swap bytes from host order to network order ( big endian ) */
 #if MM_C_STD >= 11
 #define mm_host_to_net( i ) _Generic( ( i ),\
-		uint_least16_t: mm_host_to_net_u16,\
-		uint_least32_t: mm_host_to_net_u32,\
-		uint_least64_t: mm_host_to_net_u64,\
+		uint16_t: mm_host_to_net_u16,\
+		uint32_t: mm_host_to_net_u32,\
+		uint64_t: mm_host_to_net_u64,\
 		float: mm_host_to_net_float,\
 		double: mm_host_to_net_double\
 	)( i )
 
 /** \def Generically swap bytes from network order ( big endian ) to host order */
 #define mm_net_to_host( i ) _Generic( ( i ),\
-		uint_least16_t: mm_net_to_host_u16,\
-		uint_least32_t: mm_net_to_host_u32,\
-		uint_least64_t: mm_net_to_host_u64\
+		uint16_t: mm_net_to_host_u16,\
+		uint32_t: mm_net_to_host_u32,\
+		uint64_t: mm_net_to_host_u64\
 		float: mm_net_to_host_float,\
 		double: mm_net_to_host_double\
 	)( i )
