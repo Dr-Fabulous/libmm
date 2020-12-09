@@ -163,7 +163,7 @@ static inline void mm_list_replace( struct mm_list *old_pos, struct mm_list *new
 static inline void mm_list_swap( struct mm_list *pos_1, struct mm_list *pos_2 ) {
 	struct mm_list *tmp = pos_2->prev;
 
-	mm_list_do_del( pos_2 );
+	mm_list_do_del( pos_2->prev, pos_2->next );
 	mm_list_replace( pos_1, pos_2 );
 
 	if ( tmp == pos_1 ) {
@@ -203,7 +203,7 @@ static inline void mm_list_rotate_to( struct mm_list *head, struct mm_list *pos 
 }
 
 static inline void mm_list_do_cut( struct mm_list *head, struct mm_list *other, struct mm_list *pos ) {
-	struct end = pos->next;
+	struct mm_list *end = pos->next;
 
 	other->next = head->next;
 	other->next->prev = other;
