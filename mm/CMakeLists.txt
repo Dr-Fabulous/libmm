@@ -54,7 +54,7 @@ else()
 	set( MM_USING_NATIVE_BUILTINS 0 )
 endif()
 
-if( MM_USING_BUILTINS AND MM_USING_NATIVE_BUILTINS AND MM_IS_GCC )
+if( MM_USING_BUILTINS AND MM_USING_NATIVE_BUILTINS )
 	if ( MM_IS_GCC )
 		message( STATUS "using native builtins" )
 		target_compile_options( mm PUBLIC -mpopcnt
