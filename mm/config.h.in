@@ -7,7 +7,6 @@
 #define MM_PATCH @MM_PATCH@
 #define MM_COMMITS @MM_COMMITS@
 #define MM_HASH @MM_HASH@
-#define MM_C_STD @MM_C_STD@
 #cmakedefine MM_USING_BUILTINS 1
 #cmakedefine MM_USING_NATIVE_BUILTINS 1
 #define MM_ALLOC_INC @MM_ALLOC_INC@

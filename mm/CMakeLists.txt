@@ -32,11 +32,9 @@ set( MM_HASH \"${GIT_HASH}\" )
 
 if( MM_USING_C11 )
 	message( STATUS "STD set to 'C11'" )
-	set( MM_C_STD 11 )
 	target_compile_features( mm PUBLIC c_std_11 )
 else()
 	message( STATUS "STD set to 'C99'" )
-	set( MM_C_STD 99 )
 	target_compile_features( mm PUBLIC c_std_99 )
 endif()
 

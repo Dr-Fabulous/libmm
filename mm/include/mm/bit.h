@@ -30,7 +30,7 @@
 X_ALL_BIT_TYPES
 #undef X
 
-#if MM_C_STD >= 11
+#if __STDC_VERSION__ >= 201112L
 #define mm_imin( a, b )\
 	_Generic( ( a ),\
 		char: mm_imin_c,\
@@ -54,7 +54,7 @@ X_ALL_BIT_TYPES
 X_ALL_BIT_TYPES
 #undef X
 
-#if MM_C_STD >= 11
+#if __STDC_VERSION__ >= 201112L
 #define mm_imax( a, b )\
 	_Generic( ( a ),\
 		char: mm_imax_c,\
@@ -78,7 +78,7 @@ X_ALL_BIT_TYPES
 X_ALL_BIT_TYPES
 #undef X
 
-#if MM_C_STD >= 11
+#if __STDC_VERSION__ >= 201112L
 #define mm_iclamp( a, b )\
 	_Generic( ( a ),\
 		char: mm_iclamp_c,\
@@ -119,7 +119,7 @@ X_UNSIGNED_BIT_TYPES
 #undef X
 #endif
 
-#if MM_C_STD >= 11
+#if __STDC_VERSION__ >= 201112L
 #define mm_popcount( i )\
 	_Generic( ( i )\
 		unsigned char: mm_popcount_cu,\
@@ -151,7 +151,7 @@ X_UNSIGNED_BIT_TYPES
 #undef X
 #endif
 
-#if MM_C_STD >= 11
+#if __STDC_VERSION__ >= 201112L
 #define mm_clz( i ) _Generic( ( i )\
 		unsigned char: mm_clz_cu,\
 		unsigned short: mm_clz_hu,\
@@ -182,7 +182,7 @@ X_UNSIGNED_BIT_TYPES
 #undef X
 #endif
 
-#if MM_C_STD >= 11
+#if __STDC_VERSION__ >= 201112L
 #define mm_ctz( i ) _Generic( ( i )\
 		unsigned char: mm_ctz_cu,\
 		unsigned short: mm_ctz_hu,\

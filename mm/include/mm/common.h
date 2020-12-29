@@ -26,6 +26,24 @@
 #error "unsupported compiler"
 #endif
 
+// os detection
+#if defined( unix )\
+ || defined( __unix )\
+ || defined( __unix__ )\
+ || defined( __linux__ )\
+ || defined( __FREEBSD__ )\
+ || defined( __APPLE__ )\
+ || defined( __MACH__ )
+#define MM_USING_POSIX 1
+#elif defined( WIN32 )\
+   || defined( _WIN32 )\
+   || defined( __WIN32__ )\
+   || defined( _WIN64 )
+#define MM_USING_WINDOWS 1
+#else
+#error "unsupported os"
+#endif
+
 // inline
 #ifdef MM_USING_GCC
 #define MM_FORCE_INLINE __attribute__(( always_inline ))

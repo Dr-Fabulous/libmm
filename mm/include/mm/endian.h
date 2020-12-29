@@ -26,7 +26,6 @@
  ||   defined( _M_PPC )
 
 #define MM_LITTLE_ENDIAN 1
-#define MM_BYTE_ORDER MM_LITTLE_ENDIAN
 
 #elif ( defined( __BYTE_ORDER__ ) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)\
    || ( defined( __BYTE_ORDER ) && __BYTE_ORDER == __LITTLE_ENDIAN )\
@@ -45,7 +44,6 @@
    ||   defined( _M_ARM )
 
 #define MM_BIG_ENDIAN 1
-#define MM_BYTE_ORDER MM_BIG_ENDIAN
 #else
 #error "could not figure out endian order"
 #endif
@@ -119,7 +117,7 @@ static inline double mm_host_to_net_double( double d ) {
 #endif
 
 /** \def Generically swap bytes from host order to network order ( big endian ) */
-#if MM_C_STD >= 11
+#if __STDC_VERSION__ >= 201112L
 #define mm_host_to_net( i ) _Generic( ( i ),\
 		uint16_t: mm_host_to_net_u16,\
 		uint32_t: mm_host_to_net_u32,\
