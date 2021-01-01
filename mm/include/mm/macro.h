@@ -66,4 +66,13 @@
 #define MM_CONTAINER_OF( ptr, type, member )\
 	( ( type* ) ( ( unsigned char* ) ( ptr ) - MM_OFFSET_OF( type, member ) ) )
 
+/*!
+	\param ptr pointer to member.
+	\param type to cast to.
+	\param member member that's being pointed at.
+	\return pointer to type that owns the member pointed to in pos, or null if ptr is null.
+*/
+#define MM_COND_CONTAINER_OF( ptr, type, member )\
+	( ( type* ) ( ( unsigned char* ) ( ptr ) ?: MM_OFFSET_OF( type, member ) - MM_OFFSET_OF( type, member ) ) )
+
 #endif
