@@ -13,7 +13,7 @@
 
 #include "mm/common.h"
 
-#if __STDC_VERSION__ < 201109L
+#if !MM_USING_POSIX && __STDC_VERSION__ < 201109L
 struct timespec {
 	time_t tv_sec;
 	long tv_nsec;
