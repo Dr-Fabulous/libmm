@@ -2,7 +2,7 @@
 
 MM_API bool mm_timespec_get( struct timespec *out ) {
 #if MM_USING_POSIX
-	return !clock_gettime( out, CLOCK_MONOTONIC );
+	return !clock_gettime( CLOCK_MONOTONIC, out );
 #elif __STDC_VERSION__ >= 201109L
 	return timespec_get( out, TIME_UTC ) == TIME_UTC;
 #else
