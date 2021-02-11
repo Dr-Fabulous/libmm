@@ -46,7 +46,7 @@ static inline void mm_list_init( struct mm_list *head ) {
 	\param head list to check.
 	\return true on being empty.
 */
-static inline bool mm_list_empty( struct mm_list *head ) {
+static inline bool mm_list_empty( struct mm_list const *head ) {
 	return head->next == head;
 }
 
@@ -325,16 +325,16 @@ static inline void mm_list_splice_tail( struct mm_list *head, struct mm_list *ot
 	      ( pos ) = ( tmp ), ( tmp ) = ( pos )->prev )
 
 #define MM_LIST_FIRST_CONTAINER( head, type, member )\
-	MM_CONTAINER_OF( head->next, type, member )
+	MM_CONTAINER_OF( ( head )->next, type, member )
 
 #define MM_LIST_LAST_CONTAINER( head, type, member )\
-	MM_CONTAINER_OF( head->prev, type, member )
+	MM_CONTAINER_OF( ( head )->prev, type, member )
 
 #define MM_LIST_NEXT_CONTAINER( pos, type, member )\
-	MM_CONTAINER_OF( ( pos )->member->next, type, member )
+	MM_CONTAINER_OF( ( pos )->member.next, type, member )
 
 #define MM_LIST_PREV_CONTAINER( pos, type, member )\
-	MM_CONTAINER_OF( ( pos )->member->prev, type, member )
+	MM_CONTAINER_OF( ( pos )->member.prev, type, member )
 
 /*!
 	\brief Iterate across all containers in a list.
