@@ -1,4 +1,5 @@
-- implement mm_rbtree
-- implement mm_deque
-- implement rank select dictionary, later add dynamic version
-- implement a generic binary format, for potential use as storage or networking
+- strings
+- mm_rbtree
+- sockets
+- async
+- sbf
