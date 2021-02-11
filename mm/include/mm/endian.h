@@ -48,7 +48,7 @@
 #error "could not figure out endian order"
 #endif
 
-#ifdef MM_USE_BUILTIN && MM_USING_MSVC
+#if MM_USE_BUILTIN && MM_USING_MSVC
 #include <stdlib.h>
 #define mm_bswap_u16( i ) _byteswap_ushort( i )
 #define mm_bswap_u32( i ) _byteswap_ulong( i )
@@ -134,6 +134,38 @@ static inline double mm_host_to_net_double( double d ) {
 		float: mm_net_to_host_float,\
 		double: mm_net_to_host_double\
 	)( i )
+#endif
+
+/*
+	\def Loop over a contiguous block of bytes
+	\param start name of pointer to start of block
+	\param end name of pointer to end of block
+	\param pos name of pointer to hold position during iteration
+	\param buf pointer to block to iterate across
+	\param size size of block in bytes
+*/
+#define MM_BYTE_FOREACH( start, end, pos, buf, size )\
+	for ( unsigned char const *start = ( unsigned char const* ) ( buf ), *end = start + ( size ), *pos = start;\
+	      pos < end;\
+	      ++pos )
+
+#ifdef MM_LITTLE_ENDIAN
+/*
+	\def Loop over a contiguous block of bytes from highest to lowest.
+
+	this macro is intended for use with data that needs to be iterated in big endian order.
+	\param start name of pointer to start of block
+	\param end name of pointer to end of block
+	\param pos name of pointer to hold position during iteration
+	\param buf pointer to block to iterate across
+	\param size size of block in bytes
+*/
+#define MM_BYTE_FOREACH_HI( start, end, pos, buf, size )\
+	for ( unsigned char const *start = ( unsigned char const* ) ( buf ) + ( size ) - 1, *end = ( unsigned char const* ) ( buf ), *pos = start;\
+	      pos >= end;\
+	      --pos )
+#else
+#define MM_BYTE_FOREACH_HI MM_BIT_FOREACH
 #endif
 
 #endif
