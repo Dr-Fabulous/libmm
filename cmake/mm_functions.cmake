@@ -69,7 +69,12 @@ function( mm_git_version )
 	set( ${ARG_PREFIX}_COMMITS ${COMMITS} PARENT_SCOPE )
 	set( ${ARG_PREFIX}_HASH ${HASH} PARENT_SCOPE )
 	set( ${ARG_PREFIX}_VERSION ${MAJOR}.${MINOR}.${PATCH} PARENT_SCOPE )
-	set( ${ARG_PREFIX}_FULL_VERSION ${VERSION} PARENT_SCOPE )
+
+	if ( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
+		set( ${ARG_PREFIX}_FULL_VERSION ${VERSION}-debug PARENT_SCOPE )
+	else()
+		set( ${ARG_PREFIX}_FULL_VERSION ${VERSION} PARENT_SCOPE )
+	endif()
 endfunction()
 
 macro( mm_cond_set VAR DEFAULT )

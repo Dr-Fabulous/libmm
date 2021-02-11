@@ -4,7 +4,7 @@ set( MM_INSTALL_CONF_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/mm-${GIT_FULL_VERSION}" 
 set( MM_INSTALL_LIB_DIR "${CMAKE_INSTALL_LIBDIR}/mm-${GIT_FULL_VERSION}" )
 set( MM_INSTALL_INC_DIR "${CMAKE_INSTALL_INCLUDEDIR}/mm-${GIT_FULL_VERSION}" )
 
-file( GLOB MM_SRC "src/*.c" )
+file( GLOB_RECURSE MM_SRC "src/*.c" )
 file( GLOB_RECURSE MM_HDR "include/*.h" )
 
 add_library( mm SHARED ${MM_SRC} )
