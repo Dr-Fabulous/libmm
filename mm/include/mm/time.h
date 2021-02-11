@@ -20,13 +20,12 @@ struct timespec {
 };
 #endif
 
-#define MM_TIMESPEC_NSEC_MAX 999999999
+#define MM_TIMESPEC_NSEC_MAX 999999999L
 
-typedef struct timespec timespec_t;
-typedef struct timespec mm_timespec_t;
-
-MM_API bool mm_timespec_get( struct timespec * out );
-MM_API void mm_timespec_add( const struct timespec * lhs, const struct timespec * rhs, struct timespec * out );
-MM_API void mm_timespec_sub( const struct timespec * lhs, const struct timespec * rhs, struct timespec * out );
+MM_API bool mm_timespec_get( struct timespec * const out );
+MM_API void mm_timespec_add( struct timespec const * const lhs, struct timespec const * const rhs, struct timespec * const out );
+MM_API void mm_timespec_sub( struct timespec const * const lhs, struct timespec const * const rhs, struct timespec * const out );
+MM_API int mm_timespec_sign( struct timespec const * const t );
+MM_API int mm_timespec_cmp( struct timespec const * const lhs, struct timespec const * const rhs );
 
 #endif

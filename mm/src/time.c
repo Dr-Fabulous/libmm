@@ -1,6 +1,6 @@
 #include "mm/time.h"
 
-MM_API bool mm_timespec_get( struct timespec *out ) {
+bool mm_timespec_get( struct timespec * const out ) {
 #if MM_USING_POSIX
 	return !clock_gettime( CLOCK_MONOTONIC, out );
 #elif __STDC_VERSION__ >= 201109L
@@ -15,22 +15,44 @@ MM_API bool mm_timespec_get( struct timespec *out ) {
 #endif
 }
 
-MM_API void mm_timespec_add( const struct timespec *lhs, const struct timespec *rhs, struct timespec *out ) {
-	out->tv_sec = lhs->tv_sec + rhs->tv_sec;
-	out->tv_nsec = lhs->tv_nsec + rhs->tv_nsec;
-
-	if ( out->tv_nsec > MM_TIMESPEC_NSEC_MAX ) {
-		++out->tv_sec;
-		out->tv_nsec -= MM_TIMESPEC_NSEC_MAX;
+static inline void mm_timespec_fix( struct timespec * const this ) {
+	if ( this->tv_nsec > MM_TIMESPEC_NSEC_MAX ) {
+		this->tv_sec += ( time_t ) ( this->tv_nsec / MM_TIMESPEC_NSEC_MAX );
+		this->tv_nsec %= MM_TIMESPEC_NSEC_MAX;
+	} else if ( this->tv_nsec < 0 ) {
+		this->tv_sec += ( time_t ) ( this->tv_nsec / MM_TIMESPEC_NSEC_MAX );
+		this->tv_nsec = MM_TIMESPEC_NSEC_MAX - this->tv_nsec;
 	}
 }
 
-MM_API void mm_timespec_sub( const struct timespec *lhs, const struct timespec *rhs, struct timespec *out ) {
+void mm_timespec_add( struct timespec const * const lhs, struct timespec const * const rhs, struct timespec * const out ) {
+	out->tv_sec = lhs->tv_sec + rhs->tv_sec;
+	out->tv_nsec = lhs->tv_nsec + rhs->tv_nsec;
+
+	mm_timespec_fix( out );
+}
+
+void mm_timespec_sub( struct timespec const * const lhs, struct timespec const * const rhs, struct timespec * const out ) {
 	out->tv_sec = lhs->tv_sec - rhs->tv_sec;
 	out->tv_nsec = lhs->tv_nsec - rhs->tv_nsec;
 
-	if ( out->tv_nsec < 0 ) {
-		--out->tv_sec;
-		out->tv_nsec += MM_TIMESPEC_NSEC_MAX;
+	mm_timespec_fix( out );
+}
+
+int mm_timespec_sign( struct timespec const * const t ) {
+	if ( t->tv_sec < 0 ) {
+		return -1;
+	} else if ( t->tv_sec > 0 ) {
+		return 1;
+	} else {
+		return 0;
 	}
+}
+
+int mm_timespec_cmp( struct timespec const * const lhs, struct timespec const * const rhs ) {
+	struct timespec diff;
+
+	mm_timespec_sub( lhs, rhs, &diff );
+
+	return mm_timespec_sign( &diff );
 }
