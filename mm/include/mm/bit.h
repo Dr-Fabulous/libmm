@@ -203,8 +203,11 @@ X_UNSIGNED_BIT_TYPES
 #define MM_BITSET_MASK( pos )\
 	( 1 << ( ( pos ) % CHAR_BIT ) )
 
+#define MM_BITSET( name, bits )\
+	unsigned char name[ MM_BITSET_BITS_TO_SIZE( bits ) ]
+
 #define MM_BITSET_DECLARE( name, bits )\
-	unsigned char name[ MM_BITSET_BITS_TO_SIZE( bits ) ] = { 0 };
+	MM_BITSET( name, bits ) = { 0 }
 
 #define MM_BITSET_SIZE( name )\
 	MM_ARR_SIZE( name )
@@ -219,6 +222,6 @@ X_UNSIGNED_BIT_TYPES
 	( ( name )[ MM_BITSET_POS_TO_IDX( pos ) ] ^= MM_BITSET_MASK( pos ) )
 
 #define MM_BITSET_TEST( name, pos )\
-	( ( name )[ MM_BITSET_POS_TO_IDX( pos ) ] &= MM_BITSET_MASK( pos ) )
+	( ( name )[ MM_BITSET_POS_TO_IDX( pos ) ] & MM_BITSET_MASK( pos ) )
 
 #endif
