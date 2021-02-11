@@ -75,4 +75,33 @@
 #define MM_COND_CONTAINER_OF( ptr, type, member )\
 	( ( type* ) ( ( unsigned char* ) ( ptr ) ?: MM_OFFSET_OF( type, member ) - MM_OFFSET_OF( type, member ) ) )
 
+#if __STDC_VERSION__ >= 201112L
+#define MM_STATIC_ASSERT _Static_assert
+#else
+/*!
+	\param cond compile time expression to be evaluated.
+	\param msg message to present upon error.
+*/
+#define MM_STATIC_ASSERT( cond, msg )\
+	typedef char mm_static_assert_ ## msg[ ( cond ) ? 1 : -1 ]
+#endif
+
+#define MM_GET_0( _0, ... ) _0
+#define MM_GET_1( _0, _1, ... ) _1
+#define MM_GET_2( _0, _1, _2, ... ) _2
+#define MM_GET_3( _0, _1, _2, _3, ... ) _3
+#define MM_GET_4( _0, _1, _2, _3, _4, ... ) _4
+#define MM_GET_5( _0, _1, _2, _3, _4, _5, ... ) _5
+#define MM_GET_6( _0, _1, _2, _3, _4, _5, _6, ... ) _6
+#define MM_GET_7( _0, _1, _2, _3, _4, _5, _6, _7, ... ) _7
+#define MM_GET_8( _0, _1, _2, _3, _4, _5, _6, _7, _8, ... ) _8
+#define MM_GET_9( _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, ... ) _9
+
+/*!
+	\param tuple of properties in the format ( 1, 2, 3 )
+	\param idx property to get
+*/
+#define MM_GET( tuple, idx )\
+	MM_GET_##idx tuple
+
 #endif
