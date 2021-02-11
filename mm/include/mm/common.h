@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdalign.h>
+#include <assert.h>
 
 // Release/Debug mode controlled with NDEBUG macro
 #if !defined( NDEBUG ) && !defined( MM_DEBUG )
