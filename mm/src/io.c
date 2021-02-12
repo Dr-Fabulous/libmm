@@ -114,3 +114,66 @@ int mm_sputb_hi( char * restrict str, size_t size, void const * restrict buf, si
 
 	return pos - str;
 }
+
+long long mm_utf8_fgetc( FILE *f ) {
+	char buf[ MM_UTF8_MAX ] = { 0 };
+
+	if ( !fread( buf, 1, 1, f ) ) {
+		return 0;
+	}
+
+	int len = mm_utf8_len( buf[ 0 ] );
+
+	if ( len < 0 ) {
+		return len;
+	}
+
+	if ( fread( buf + 1, 1, len, f ) != ( size_t ) len ) {
+		return MM_UTF8_EOF;
+	}
+
+	char32_t c = 0;
+	int ret = mm_utf8_to_utf32( &c, buf, len );
+
+	if ( ret < 0 ) {
+		return ret;
+	}
+
+	return ( long long ) c;
+}
+
+long long mm_utf8_fungetc( FILE* f, long long c ) {
+	int len = mm_utf32_to_utf8_len( c );
+
+	if ( len < 0 ) {
+		return len;
+	}
+
+	if ( fseek( f, -len, SEEK_CUR ) ) {
+		return MM_UTF8_EOF;
+	}
+
+	return c;
+}
+
+long long mm_utf8_fputc( FILE *f, long long c ) {
+	int len = mm_utf32_to_utf8_len( c );
+
+	if ( len < 0 ) {
+		return len;
+	}
+
+	char32_t ch = c;
+	char buf[ MM_UTF8_MAX ] = { 0 };
+	int ret = mm_utf32_to_utf8( buf, &ch, len );
+
+	if ( ret < 0 ) {
+		return ret;
+	}
+
+	if ( fwrite( buf, 1, len, f ) != ( size_t ) len ) {
+		return MM_UTF8_EOF;
+	}
+
+	return c;
+}
