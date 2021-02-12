@@ -119,16 +119,16 @@ long long mm_utf8_fgetc( FILE *f ) {
 	char buf[ MM_UTF8_MAX ] = { 0 };
 
 	if ( !fread( buf, 1, 1, f ) ) {
-		return 0;
+		return MM_UTF8_EOF;
 	}
 
 	int len = mm_utf8_len( buf[ 0 ] );
 
 	if ( len < 0 ) {
-		return len;
+		return MM_UTF8_EOF;
 	}
 
-	if ( fread( buf + 1, 1, len, f ) != ( size_t ) len ) {
+	if ( len > 1 && fread( buf + 1, 1, len, f ) != ( size_t ) len ) {
 		return MM_UTF8_EOF;
 	}
 
@@ -136,7 +136,7 @@ long long mm_utf8_fgetc( FILE *f ) {
 	int ret = mm_utf8_to_utf32( &c, buf, len );
 
 	if ( ret < 0 ) {
-		return ret;
+		return MM_UTF8_EOF;
 	}
 
 	return ( long long ) c;
@@ -146,7 +146,7 @@ long long mm_utf8_fungetc( FILE* f, long long c ) {
 	int len = mm_utf32_to_utf8_len( c );
 
 	if ( len < 0 ) {
-		return len;
+		return MM_UTF8_EOF;
 	}
 
 	if ( fseek( f, -len, SEEK_CUR ) ) {
@@ -168,7 +168,7 @@ long long mm_utf8_fputc( FILE *f, long long c ) {
 	int ret = mm_utf32_to_utf8( buf, &ch, len );
 
 	if ( ret < 0 ) {
-		return ret;
+		return MM_UTF8_EOF;
 	}
 
 	if ( fwrite( buf, 1, len, f ) != ( size_t ) len ) {

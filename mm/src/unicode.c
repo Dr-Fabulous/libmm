@@ -14,7 +14,7 @@
 #define UTF8_PREFIX( tuple ) MM_GET( tuple, 0 )
 #define UTF8_MASK( tuple ) MM_GET( tuple, 1 )
 #define UTF8_MAX( tuple ) MM_GET( tuple, 2 )
-#define UTF8_IS( tuple, byte ) ( ( *( unsigned char* ) ( byte ) ) & UTF8_MASK( tuple ) == UTF8_PREFIX( tuple ) )
+#define UTF8_IS( tuple, byte ) ( ( ( *( unsigned char* ) ( byte ) ) & UTF8_MASK( tuple ) ) == UTF8_PREFIX( tuple ) )
 
 char* mm_utf8_next( char const *str, char const *end ) {
 	if ( str >= end ) {
@@ -132,11 +132,9 @@ char const* mm_utf8_find_invalid( char const *str, size_t bytes ) {
 }
 
 char const* mm_utf8_find_invalid_ascii( char const *str, size_t bytes ) {
-	unsigned char const *pos = ( unsigned char const* ) str;
-
-	for (; *pos != '\0' && bytes; ++pos, --bytes ) {
-		if ( *pos > 127 ) {
-			return ( char const* ) pos;
+	for (; *str != '\0' && bytes; ++str, --bytes ) {
+		if ( !UTF8_IS( UTF8_1, str ) ) {
+			return str;
 		}
 	}
 
