@@ -198,8 +198,8 @@ int mm_utf8_to_utf32( char32_t * restrict dst, char const * restrict _src, size_
 			return 0;
 		}
 
-		*dst = ( ( ( char32_t ) src[ 0 ] & ~UTF8_PREFIX( UTF8_2 ) ) << 6 )
-		     | ( ( ( char32_t ) src[ 1 ] & ~UTF8_PREFIX( UTF8_T ) ) );
+		*dst = ( ( ( char32_t ) src[ 0 ] & ~UTF8_MASK( UTF8_2 ) ) << 6 )
+		     | ( ( ( char32_t ) src[ 1 ] & ~UTF8_MASK( UTF8_T ) ) );
 
 		return 2;
 	} else if ( UTF8_IS( UTF8_3, src ) ) {
@@ -207,9 +207,9 @@ int mm_utf8_to_utf32( char32_t * restrict dst, char const * restrict _src, size_
 			return 0;
 		}
 
-		*dst = ( ( ( char32_t ) src[ 0 ] & ~UTF8_PREFIX( UTF8_3 ) ) << 12 )
-		     | ( ( ( char32_t ) src[ 1 ] & ~UTF8_PREFIX( UTF8_T ) ) << 6 )
-		     | ( ( char32_t ) src[ 2 ] & ~UTF8_PREFIX( UTF8_T ) );
+		*dst = ( ( ( char32_t ) src[ 0 ] & ~UTF8_MASK( UTF8_3 ) ) << 12 )
+		     | ( ( ( char32_t ) src[ 1 ] & ~UTF8_MASK( UTF8_T ) ) << 6 )
+		     | ( ( char32_t ) src[ 2 ] & ~UTF8_MASK( UTF8_T ) );
 
 		return 3;
 	} else if ( UTF8_IS( UTF8_4, src ) ) {
@@ -217,10 +217,10 @@ int mm_utf8_to_utf32( char32_t * restrict dst, char const * restrict _src, size_
 			return 0;
 		}
 
-		*dst = ( ( ( char32_t ) src[ 0 ] & ~UTF8_PREFIX( UTF8_4 ) ) << 18 )
-		     | ( ( ( char32_t ) src[ 1 ] & ~UTF8_PREFIX( UTF8_T ) ) << 12 )
-		     | ( ( ( char32_t ) src[ 2 ] & ~UTF8_PREFIX( UTF8_T ) ) << 6 )
-		     | ( ( char32_t ) src[ 3 ] & ~UTF8_PREFIX( UTF8_T ) );
+		*dst = ( ( ( char32_t ) src[ 0 ] & ~UTF8_MASK( UTF8_4 ) ) << 18 )
+		     | ( ( ( char32_t ) src[ 1 ] & ~UTF8_MASK( UTF8_T ) ) << 12 )
+		     | ( ( ( char32_t ) src[ 2 ] & ~UTF8_MASK( UTF8_T ) ) << 6 )
+		     | ( ( char32_t ) src[ 3 ] & ~UTF8_MASK( UTF8_T ) );
 
 		return 4;
 	} 
@@ -247,7 +247,7 @@ int mm_utf32_to_utf8( char * restrict _dst, char32_t const * restrict src, size_
 		}
 
 		dst[ 0 ] = UTF8_PREFIX( UTF8_2 ) | ( unsigned char ) ( *src >> 6 );
-		dst[ 1 ] = UTF8_PREFIX( UTF8_T ) | ( unsigned char ) ( *src & ~UTF8_PREFIX( UTF8_T ) );
+		dst[ 1 ] = UTF8_PREFIX( UTF8_T ) | ( unsigned char ) ( *src & ~UTF8_MASK( UTF8_T ) );
 
 		return 2;
 	} else if ( *src <= UTF8_MAX( UTF8_3 ) ) {
@@ -256,8 +256,8 @@ int mm_utf32_to_utf8( char * restrict _dst, char32_t const * restrict src, size_
 		}
 
 		dst[ 0 ] = UTF8_PREFIX( UTF8_3 ) | ( unsigned char ) ( *src >> 12 );
-		dst[ 1 ] = UTF8_PREFIX( UTF8_T ) | ( unsigned char ) ( ( *src >> 6 ) & ~UTF8_PREFIX( UTF8_T ) );
-		dst[ 2 ] = UTF8_PREFIX( UTF8_T ) | ( unsigned char ) ( *src & ~UTF8_PREFIX( UTF8_T ) );
+		dst[ 1 ] = UTF8_PREFIX( UTF8_T ) | ( unsigned char ) ( ( *src >> 6 ) & ~UTF8_MASK( UTF8_T ) );
+		dst[ 2 ] = UTF8_PREFIX( UTF8_T ) | ( unsigned char ) ( *src & ~UTF8_MASK( UTF8_T ) );
 
 		return 3;
 	} else if ( *src <= UTF8_MAX( UTF8_4 ) ) {
@@ -266,9 +266,9 @@ int mm_utf32_to_utf8( char * restrict _dst, char32_t const * restrict src, size_
 		}
 
 		dst[ 0 ] = UTF8_PREFIX( UTF8_4 ) | ( unsigned char ) ( *src >> 18 );
-		dst[ 1 ] = UTF8_PREFIX( UTF8_T ) | ( ( unsigned char ) ( *src >> 12 ) & ~UTF8_PREFIX( UTF8_T ) );
-		dst[ 2 ] = UTF8_PREFIX( UTF8_T ) | ( ( unsigned char ) ( *src >> 6 ) & ~UTF8_PREFIX( UTF8_T ) );
-		dst[ 3 ] = UTF8_PREFIX( UTF8_T ) | ( ( unsigned char ) *src & ~UTF8_PREFIX( UTF8_T ) );
+		dst[ 1 ] = UTF8_PREFIX( UTF8_T ) | ( ( unsigned char ) ( *src >> 12 ) & ~UTF8_MASK( UTF8_T ) );
+		dst[ 2 ] = UTF8_PREFIX( UTF8_T ) | ( ( unsigned char ) ( *src >> 6 ) & ~UTF8_MASK( UTF8_T ) );
+		dst[ 3 ] = UTF8_PREFIX( UTF8_T ) | ( ( unsigned char ) *src & ~UTF8_MASK( UTF8_T ) );
 
 		return 4;
 	}
