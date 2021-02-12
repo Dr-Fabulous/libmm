@@ -4,6 +4,12 @@
 /*! \file */
 
 /*!
+	\param macro cpp macro to force expansion of
+*/
+#define MM_EXPAND( macro )\
+	macro
+
+/*!
 	\param type type to get bitsize of
 	\return total number of bits in given type
 */
@@ -102,6 +108,6 @@
 	\param idx property to get
 */
 #define MM_GET( tuple, idx )\
-	MM_GET_##idx tuple
+	MM_CAT( MM_GET_, idx ) tuple
 
 #endif
